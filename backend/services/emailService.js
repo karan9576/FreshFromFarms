@@ -1,78 +1,72 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
 // Keep track of Ethereal test accounts to avoid creating them repeatedly on every email send
 let testTransporter = null;
 
-const getTransporter = async () => {
-  // 1. If live SMTP credentials are configured in .env, use them
-  if (process.env.SMTP_HOST) {
-    console.log(`[Email] Using live SMTP: ${process.env.SMTP_HOST}:${process.env.SMTP_PORT} as ${process.env.SMTP_USER}`);
-    return nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: process.env.SMTP_PORT == 465,
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS
-      },
-      tls: {
-        rejectUnauthorized: false
-      }
-    });
-  }
-
-  // 2. Otherwise, fall back to Ethereal mock SMTP test accounts
-  if (testTransporter) return testTransporter;
-
-  try {
-    const testAccount = await nodemailer.createTestAccount();
-    console.log('--- Ethereal Test Email Account Configured ---');
-    console.log(`User: ${testAccount.user}`);
-    console.log(`Pass: ${testAccount.pass}`);
-    console.log('---------------------------------------------');
-
-    testTransporter = nodemailer.createTransport({
-      host: 'smtp.ethereal.email',
-      port: 587,
-      secure: false,
-      auth: {
-        user: testAccount.user,
-        pass: testAccount.pass
-      }
-    });
-    return testTransporter;
-  } catch (error) {
-    console.error('Error creating Ethereal email transporter:', error);
-    return null;
-  }
-};
-
 const sendMailHelper = async (mailOptions) => {
-  try {
-    const transporter = await getTransporter();
-    if (!transporter) {
-      console.warn('Transporter is unavailable. Email send skipped.');
+  // 1. Use Resend API if key is configured (works on Render free tier - HTTP, not SMTP)
+  if (process.env.RESEND_API_KEY) {
+    try {
+      const resend = new Resend(process.env.RESEND_API_KEY);
+      const { data, error } = await resend.emails.send({
+        from: 'FreshFromFarms <onboarding@resend.dev>',
+        to: mailOptions.to,
+        subject: mailOptions.subject,
+        html: mailOptions.html,
+      });
+      if (error) {
+        console.error('❌ Resend API error:', error);
+        return;
+      }
+      console.log(`📧 Email sent via Resend to: ${mailOptions.to} | ID: ${data.id}`);
+      return;
+    } catch (err) {
+      console.error('❌ Resend send failed:', err.message);
       return;
     }
+  }
 
-    const info = await transporter.sendMail({
-      from: `"FreshFromFarms Support" <${process.env.SMTP_USER || 'no-reply@freshfromfarms.com'}>`,
+  // 2. Fall back to Nodemailer SMTP (for local dev with Gmail)
+  const nodemailer = require('nodemailer');
+  if (process.env.SMTP_HOST) {
+    try {
+      console.log(`[Email] Using SMTP: ${process.env.SMTP_HOST}:${process.env.SMTP_PORT}`);
+      const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: Number(process.env.SMTP_PORT) || 587,
+        secure: process.env.SMTP_PORT == 465,
+        auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+        tls: { rejectUnauthorized: false }
+      });
+      const info = await transporter.sendMail({
+        from: `"FreshFromFarms Support" <${process.env.SMTP_USER}>`,
+        ...mailOptions
+      });
+      console.log(`📧 Email sent via SMTP to: ${mailOptions.to} | ID: ${info.messageId}`);
+      return;
+    } catch (error) {
+      console.error('❌ SMTP Error:', error.message, '| Code:', error.code);
+      return;
+    }
+  }
+
+  // 3. Fall back to Ethereal mock for testing
+  try {
+    if (!testTransporter) {
+      const testAccount = await nodemailer.createTestAccount();
+      console.log('--- Ethereal Test Account ---', testAccount.user);
+      testTransporter = nodemailer.createTransport({
+        host: 'smtp.ethereal.email', port: 587, secure: false,
+        auth: { user: testAccount.user, pass: testAccount.pass }
+      });
+    }
+    const info = await testTransporter.sendMail({
+      from: '"FreshFromFarms Support" <noreply@freshfromfarms.com>',
       ...mailOptions
     });
-
-    console.log(`📧 Email sent successfully to: ${mailOptions.to} | MessageID: ${info.messageId}`);
-    // If Ethereal test account is used, output the web preview link to console log!
-    if (nodemailer.getTestMessageUrl) {
-      const previewUrl = nodemailer.getTestMessageUrl(info);
-      if (previewUrl) {
-        console.log(`🔗 Mock Email Preview Link: ${previewUrl}`);
-      }
-    }
+    console.log(`📧 Ethereal test email: ${nodemailer.getTestMessageUrl(info)}`);
   } catch (error) {
-    console.error('❌ Error sending email to:', mailOptions.to);
-    console.error('❌ SMTP Error details:', error.message);
-    console.error('❌ SMTP Error code:', error.code);
-    console.error('❌ SMTP Response:', error.response);
+    console.error('❌ Ethereal Error:', error.message);
   }
 };
 
