@@ -1,24 +1,32 @@
-const SibApiV3Sdk = require('@getbrevo/brevo');
+const axios = require('axios');
 const nodemailer = require('nodemailer');
 
 const sendMailHelper = async (mailOptions) => {
-  // PRIMARY: Brevo HTTP API (works on Render free tier — bypasses blocked SMTP ports)
+  // PRIMARY: Brevo REST API via axios (works on Render free tier — no SMTP needed)
   if (process.env.BREVO_API_KEY) {
     try {
-      const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
-      apiInstance.authentications['api-key'].apiKey = process.env.BREVO_API_KEY;
-
-      const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
-      sendSmtpEmail.to = [{ email: mailOptions.to }];
-      sendSmtpEmail.subject = mailOptions.subject;
-      sendSmtpEmail.htmlContent = mailOptions.html;
-      sendSmtpEmail.sender = { name: 'FreshFromFarms', email: process.env.SMTP_USER || 'care.freshfromfarms@gmail.com' };
-
-      const result = await apiInstance.sendTransacEmail(sendSmtpEmail);
-      console.log(`📧 Email sent via Brevo to: ${mailOptions.to} | ID: ${result?.body?.messageId || 'ok'}`);
+      await axios.post(
+        'https://api.brevo.com/v3/smtp/email',
+        {
+          sender: {
+            name: 'FreshFromFarms',
+            email: process.env.SMTP_USER || 'care.freshfromfarms@gmail.com'
+          },
+          to: [{ email: mailOptions.to }],
+          subject: mailOptions.subject,
+          htmlContent: mailOptions.html
+        },
+        {
+          headers: {
+            'api-key': process.env.BREVO_API_KEY,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      console.log(`📧 Email sent via Brevo to: ${mailOptions.to}`);
       return;
     } catch (err) {
-      console.error('❌ Brevo send failed:', err.message);
+      console.error('❌ Brevo send failed:', err.response?.data || err.message);
       return;
     }
   }
