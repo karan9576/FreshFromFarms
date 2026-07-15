@@ -1,26 +1,42 @@
 const nodemailer = require('nodemailer');
+const dns = require('dns');
 
 let transporter = null;
 
-const getTransporter = () => {
+// Resolve hostname to IPv4 to avoid IPv6 ENETUNREACH on Render free tier
+const resolveIPv4 = (hostname) => new Promise((resolve) => {
+  dns.lookup(hostname, { family: 4 }, (err, address) => {
+    if (err) {
+      console.warn(`[Email] IPv4 DNS lookup failed for ${hostname}, using hostname directly`);
+      resolve(hostname);
+    } else {
+      console.log(`[Email] Resolved ${hostname} → ${address} (IPv4)`);
+      resolve(address);
+    }
+  });
+});
+
+const getTransporter = async () => {
   if (transporter) return transporter;
 
+  const smtpHostname = process.env.SMTP_HOST || 'smtp.gmail.com';
+  const smtpIP = await resolveIPv4(smtpHostname);
+
   transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST || 'smtp.gmail.com',
+    host: smtpIP,         // Use resolved IPv4 address directly
     port: 465,
-    secure: true, // port 465 uses SSL directly (works on Render, 587 is blocked)
+    secure: true,
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS
     },
     tls: {
-      rejectUnauthorized: false
-    },
-    // Force IPv4 to avoid Render IPv6 connectivity issues
-    socketOptions: { family: 4 }
+      rejectUnauthorized: false,
+      servername: smtpHostname  // Keep original hostname for TLS SNI
+    }
   });
 
-  console.log(`[Email] Nodemailer transporter ready: ${process.env.SMTP_HOST || 'smtp.gmail.com'}:465 as ${process.env.SMTP_USER}`);
+  console.log(`[Email] Nodemailer ready on ${smtpIP}:465 as ${process.env.SMTP_USER}`);
   return transporter;
 };
 
@@ -30,7 +46,7 @@ const sendMailHelper = async (mailOptions) => {
     return;
   }
   try {
-    const t = getTransporter();
+    const t = await getTransporter();
     const info = await t.sendMail({
       from: `"FreshFromFarms" <${process.env.SMTP_USER}>`,
       ...mailOptions
@@ -38,8 +54,7 @@ const sendMailHelper = async (mailOptions) => {
     console.log(`📧 Email sent to: ${mailOptions.to} | ID: ${info.messageId}`);
   } catch (err) {
     console.error('❌ Email send failed:', err.message, '| Code:', err.code);
-    // Reset transporter so next attempt creates a fresh connection
-    transporter = null;
+    transporter = null; // Reset so next attempt retries DNS resolution
   }
 };
 
