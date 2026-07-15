@@ -1,61 +1,49 @@
+const SibApiV3Sdk = require('@getbrevo/brevo');
 const nodemailer = require('nodemailer');
-const dns = require('dns');
-
-let transporter = null;
-
-// Resolve hostname to IPv4 to avoid IPv6 ENETUNREACH on Render free tier
-const resolveIPv4 = (hostname) => new Promise((resolve) => {
-  dns.lookup(hostname, { family: 4 }, (err, address) => {
-    if (err) {
-      console.warn(`[Email] IPv4 DNS lookup failed for ${hostname}, using hostname directly`);
-      resolve(hostname);
-    } else {
-      console.log(`[Email] Resolved ${hostname} → ${address} (IPv4)`);
-      resolve(address);
-    }
-  });
-});
-
-const getTransporter = async () => {
-  if (transporter) return transporter;
-
-  const smtpHostname = process.env.SMTP_HOST || 'smtp.gmail.com';
-  const smtpIP = await resolveIPv4(smtpHostname);
-
-  transporter = nodemailer.createTransport({
-    host: smtpIP,         // Use resolved IPv4 address directly
-    port: 465,
-    secure: true,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS
-    },
-    tls: {
-      rejectUnauthorized: false,
-      servername: smtpHostname  // Keep original hostname for TLS SNI
-    }
-  });
-
-  console.log(`[Email] Nodemailer ready on ${smtpIP}:465 as ${process.env.SMTP_USER}`);
-  return transporter;
-};
 
 const sendMailHelper = async (mailOptions) => {
-  if (!process.env.SMTP_USER || !process.env.SMTP_PASS) {
-    console.warn('[Email] SMTP_USER or SMTP_PASS not set — skipping email send.');
+  // PRIMARY: Brevo HTTP API (works on Render free tier — bypasses blocked SMTP ports)
+  if (process.env.BREVO_API_KEY) {
+    try {
+      const apiInstance = new SibApiV3Sdk.TransactionalEmailsApi();
+      apiInstance.authentications['api-key'].apiKey = process.env.BREVO_API_KEY;
+
+      const sendSmtpEmail = new SibApiV3Sdk.SendSmtpEmail();
+      sendSmtpEmail.to = [{ email: mailOptions.to }];
+      sendSmtpEmail.subject = mailOptions.subject;
+      sendSmtpEmail.htmlContent = mailOptions.html;
+      sendSmtpEmail.sender = { name: 'FreshFromFarms', email: process.env.SMTP_USER || 'care.freshfromfarms@gmail.com' };
+
+      const result = await apiInstance.sendTransacEmail(sendSmtpEmail);
+      console.log(`📧 Email sent via Brevo to: ${mailOptions.to} | ID: ${result?.body?.messageId || 'ok'}`);
+      return;
+    } catch (err) {
+      console.error('❌ Brevo send failed:', err.message);
+      return;
+    }
+  }
+
+  // FALLBACK: Nodemailer SMTP (for local development only)
+  if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+    try {
+      const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST || 'smtp.gmail.com',
+        port: 587,
+        secure: false,
+        auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+      });
+      const info = await transporter.sendMail({
+        from: `"FreshFromFarms" <${process.env.SMTP_USER}>`,
+        ...mailOptions
+      });
+      console.log(`📧 Email sent via SMTP to: ${mailOptions.to} | ID: ${info.messageId}`);
+    } catch (err) {
+      console.error('❌ SMTP email failed:', err.message);
+    }
     return;
   }
-  try {
-    const t = await getTransporter();
-    const info = await t.sendMail({
-      from: `"FreshFromFarms" <${process.env.SMTP_USER}>`,
-      ...mailOptions
-    });
-    console.log(`📧 Email sent to: ${mailOptions.to} | ID: ${info.messageId}`);
-  } catch (err) {
-    console.error('❌ Email send failed:', err.message, '| Code:', err.code);
-    transporter = null; // Reset so next attempt retries DNS resolution
-  }
+
+  console.warn('[Email] No email provider configured (set BREVO_API_KEY for production).');
 };
 
 exports.sendSignupEmail = async (userEmail, displayName) => {
