@@ -67,6 +67,19 @@ app.use('/api/products', require('./routes/product'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/payment', require('./routes/payment'));
 
+app.get('/test-email', async (req, res) => {
+  try {
+    const emailService = require('./services/emailService');
+    await emailService.sendSignupEmail(
+      process.env.SMTP_USER || 'test@example.com',
+      'Test User'
+    );
+    res.send('Test email triggered! Check Render logs for results.');
+  } catch (err) {
+    res.status(500).send(`Email test failed: ${err.message}`);
+  }
+});
+
 app.get('/', (req, res) => {
   res.send('FreshFromFarms API is running');
 });

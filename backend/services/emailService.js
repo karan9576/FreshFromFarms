@@ -6,6 +6,7 @@ let testTransporter = null;
 const getTransporter = async () => {
   // 1. If live SMTP credentials are configured in .env, use them
   if (process.env.SMTP_HOST) {
+    console.log(`[Email] Using live SMTP: ${process.env.SMTP_HOST}:${process.env.SMTP_PORT} as ${process.env.SMTP_USER}`);
     return nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: Number(process.env.SMTP_PORT) || 587,
@@ -13,6 +14,9 @@ const getTransporter = async () => {
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS
+      },
+      tls: {
+        rejectUnauthorized: false
       }
     });
   }
@@ -56,7 +60,7 @@ const sendMailHelper = async (mailOptions) => {
       ...mailOptions
     });
 
-    console.log(`📧 Email sent successfully: ${info.messageId}`);
+    console.log(`📧 Email sent successfully to: ${mailOptions.to} | MessageID: ${info.messageId}`);
     // If Ethereal test account is used, output the web preview link to console log!
     if (nodemailer.getTestMessageUrl) {
       const previewUrl = nodemailer.getTestMessageUrl(info);
@@ -65,7 +69,10 @@ const sendMailHelper = async (mailOptions) => {
       }
     }
   } catch (error) {
-    console.error('Error sending email:', error);
+    console.error('❌ Error sending email to:', mailOptions.to);
+    console.error('❌ SMTP Error details:', error.message);
+    console.error('❌ SMTP Error code:', error.code);
+    console.error('❌ SMTP Response:', error.response);
   }
 };
 
