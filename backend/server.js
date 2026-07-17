@@ -44,6 +44,28 @@ app.use(session(sessionConfig));
 app.use(passport.initialize());
 app.use(passport.session());
 
+// JWT verification middleware for cross-domain mobile API requests
+app.use(async (req, res, next) => {
+  if (req.user) return next(); // Already authenticated via session cookie
+
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    try {
+      const jwt = require('jsonwebtoken');
+      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'freshfromfarmssecret_key_2026');
+      const User = require('./models/User');
+      const user = await User.findById(decoded.id);
+      if (user) {
+        req.user = user;
+      }
+    } catch (err) {
+      console.warn('[Auth] JWT token invalid or expired:', err.message);
+    }
+  }
+  next();
+});
+
 // Stat tracking middleware (Visits)
 app.use(async (req, res, next) => {
   // Only track API visits to avoid counting static asset requests if any

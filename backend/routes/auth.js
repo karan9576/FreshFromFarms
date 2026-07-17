@@ -3,7 +3,7 @@ const router = express.Router();
 const authController = require('../controllers/authController');
 
 const isAuthenticated = (req, res, next) => {
-  if (req.isAuthenticated()) return next();
+  if (req.isAuthenticated() || req.user) return next();
   res.status(401).json({ message: 'Please login to continue' });
 };
 

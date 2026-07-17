@@ -1,13 +1,31 @@
 const passport = require('passport');
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 const Order = require('../models/Order');
 
 exports.googleLogin = passport.authenticate('google', { scope: ['profile', 'email'] });
 
-exports.googleCallback = passport.authenticate('google', {
-  successRedirect: process.env.FRONTEND_URL,
-  failureRedirect: `${process.env.FRONTEND_URL}/login`,
-});
+exports.googleCallback = (req, res, next) => {
+  passport.authenticate('google', (err, user, info) => {
+    if (err || !user) {
+      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/login?error=auth_failed`);
+    }
+    req.logIn(user, (loginErr) => {
+      if (loginErr) {
+        return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/login?error=auth_failed`);
+      }
+      
+      // Generate JWT session token for cross-domain mobile clients
+      const token = jwt.sign(
+        { id: user._id, isAdmin: user.isAdmin },
+        process.env.JWT_SECRET || 'freshfromfarmssecret_key_2026',
+        { expiresIn: '30d' }
+      );
+      
+      return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}/login-success?token=${token}`);
+    });
+  })(req, res, next);
+};
 
 exports.logout = (req, res, next) => {
   req.logout((err) => {

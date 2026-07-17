@@ -3,10 +3,25 @@ import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
+import LoginSuccess from './pages/LoginSuccess';
 import AdminDashboard from './pages/AdminDashboard';
 import MyOrders from './pages/MyOrders';
 import { X, Plus, Minus, ShoppingBag } from 'lucide-react';
 import axios from 'axios';
+
+// Globally intercept all outgoing axios calls to automatically attach Bearer token if it exists in localStorage
+axios.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 function App() {
   const [cart, setCart] = useState([]);
@@ -227,11 +242,12 @@ function App() {
 
   return (
     <>
-      <Navbar cartCount={cartCount} onCartClick={() => setIsCartOpen(true)} user={user} />
+      <Navbar cartCount={cartCount} onCartClick={() => setIsCartOpen(true)} user={user} setUser={setUser} />
       
       <Routes>
         <Route path="/" element={<Home addToCart={addToCart} cart={cart} updateQuantity={updateQuantity} />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/login-success" element={<LoginSuccess setUser={setUser} />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/my-orders" element={<MyOrders />} />
       </Routes>
