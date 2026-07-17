@@ -120,65 +120,6 @@ function ProductCard({ product, addToCart, cart = [], updateQuantity }) {
   const [selectedWeight, setSelectedWeight] = useState('100g'); // Default selected weight
   const currentPrice = product.prices[selectedWeight];
 
-  const handleAddToCart = (e) => {
-    // 1. Trigger parent context addToCart logic
-    addToCart(product, selectedWeight, currentPrice);
-
-    // 2. Trigger fly micro-animation
-    const cardElement = e.target.closest('.product-card');
-    const imgElement = cardElement ? cardElement.querySelector('.product-package-img') : null;
-    // Query for first visible cart button (.cart-nav-btn is present on both desktop and mobile navbar)
-    const cartElement = document.querySelector('.cart-nav-btn');
-
-    if (imgElement && cartElement) {
-      const imgRect = imgElement.getBoundingClientRect();
-      const cartRect = cartElement.getBoundingClientRect();
-
-      // Create a temporary cloned element for flying animation
-      const clone = imgElement.cloneNode(true);
-      clone.style.position = 'fixed';
-      clone.style.left = `${imgRect.left}px`;
-      clone.style.top = `${imgRect.top}px`;
-      clone.style.width = `${imgRect.width}px`;
-      clone.style.height = `${imgRect.height}px`;
-      clone.style.zIndex = '10000';
-      clone.style.pointerEvents = 'none';
-      clone.style.transition = 'all 1.1s cubic-bezier(0.25, 1, 0.5, 1)';
-      clone.style.opacity = '1';
-      clone.style.transform = 'scale(1) rotate(0deg)';
-      clone.style.filter = 'drop-shadow(0 10px 15px rgba(0, 0, 0, 0.15))';
-      
-      document.body.appendChild(clone);
-
-      // Transition properties on next paint (delayed to prevent browser transition batching/skipping)
-      setTimeout(() => {
-        clone.style.left = `${cartRect.left + cartRect.width / 2 - 15}px`;
-        clone.style.top = `${cartRect.top + cartRect.height / 2 - 15}px`;
-        clone.style.width = '35px';
-        clone.style.height = '35px';
-        clone.style.opacity = '0.15';
-        clone.style.transform = 'scale(0.25) rotate(720deg)';
-      }, 50);
-
-      // Cleanup and bump cart button state
-      setTimeout(() => {
-        clone.remove();
-        cartElement.classList.add('bump');
-        
-        const mobileToggle = document.querySelector('.mobile-menu-toggle');
-        if (mobileToggle) {
-          mobileToggle.classList.add('bump');
-        }
-
-        setTimeout(() => {
-          cartElement.classList.remove('bump');
-          if (mobileToggle) {
-            mobileToggle.classList.remove('bump');
-          }
-        }, 500);
-      }, 1150);
-    }
-  };
 
   return (
     <div className="product-card">
@@ -227,7 +168,7 @@ function ProductCard({ product, addToCart, cart = [], updateQuantity }) {
               );
             }
             return (
-              <button className="btn-primary" onClick={handleAddToCart}>
+              <button className="btn-primary" onClick={() => addToCart(product, selectedWeight, currentPrice)}>
                 Add to Cart
               </button>
             );
