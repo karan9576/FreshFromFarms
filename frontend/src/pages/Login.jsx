@@ -1,15 +1,42 @@
 import React from 'react';
+import { useSearchParams } from 'react-router-dom';
 
 export default function Login() {
+  const [searchParams] = useSearchParams();
+  const errorType = searchParams.get('error');
+  const errorMsg = searchParams.get('msg');
+
   // Point directly to the Express Passport.js redirection route.
   // This triggers the server-side OAuth callback, registers the user,
   // sets session cookies, and handles redirects.
-  const backendAuthUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/google`;
+  const apiURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  const cleanApiURL = apiURL.endsWith('/') ? apiURL.slice(0, -1) : apiURL;
+  const backendAuthUrl = `${cleanApiURL}/auth/google`;
 
   return (
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', padding: '1rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', padding: '1rem' }}>
       <div className="glass-panel" style={{ textAlign: 'center', maxWidth: '400px', width: '100%', padding: '2.5rem 2rem' }}>
         <h2 style={{ marginBottom: '1rem', fontWeight: 800, color: 'var(--bg-dark)' }}>Welcome Back</h2>
+        
+        {errorType && (
+          <div style={{ 
+            backgroundColor: 'rgba(231, 76, 60, 0.1)', 
+            border: '1px solid rgba(231, 76, 60, 0.2)', 
+            borderRadius: '12px', 
+            padding: '0.8rem 1rem', 
+            marginBottom: '1.5rem', 
+            textAlign: 'left',
+            fontSize: '0.85rem'
+          }}>
+            <p style={{ color: '#e74c3c', fontWeight: 700, margin: 0 }}>Authentication Failed</p>
+            <p style={{ color: 'var(--text-dark)', margin: '0.2rem 0 0', opacity: 0.8 }}>
+              {errorType === 'no_token_provided' && 'No login session token returned from authentication server.'}
+              {errorType === 'token_fetch_failed' && `Unable to fetch user profile: ${errorMsg || 'Unknown error'}`}
+              {errorType === 'auth_failed' && 'Google OAuth authentication failed. Please try again.'}
+            </p>
+          </div>
+        )}
+
         <p style={{ color: 'var(--text-muted)', marginBottom: '2.5rem', fontSize: '0.95rem', lineHeight: '1.5' }}>
           Sign in using your Google account to access your customer dashboard or the admin panel.
         </p>

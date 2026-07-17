@@ -15,7 +15,8 @@ export default function LoginSuccess({ setUser }) {
       const fetchUser = async () => {
         try {
           const apiURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-          const res = await axios.get(`${apiURL}/auth/current_user`, {
+          const cleanApiURL = apiURL.endsWith('/') ? apiURL.slice(0, -1) : apiURL;
+          const res = await axios.get(`${cleanApiURL}/auth/current_user`, {
             headers: { Authorization: `Bearer ${token}` }
           });
           setUser(res.data);
@@ -28,13 +29,13 @@ export default function LoginSuccess({ setUser }) {
           }
         } catch (err) {
           console.error('Error fetching user after token login:', err);
-          navigate('/login');
+          navigate(`/login?error=token_fetch_failed&msg=${encodeURIComponent(err.response?.data?.message || err.message)}`);
         }
       };
       
       fetchUser();
     } else {
-      navigate('/login');
+      navigate('/login?error=no_token_provided');
     }
   }, [searchParams, navigate, setUser]);
 

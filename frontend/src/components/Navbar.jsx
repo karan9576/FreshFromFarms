@@ -9,7 +9,9 @@ export default function Navbar({ cartCount, onCartClick, user, setUser }) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const backendLogoutUrl = `${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/auth/logout`;
+  const apiURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  const cleanApiURL = apiURL.endsWith('/') ? apiURL.slice(0, -1) : apiURL;
+  const backendLogoutUrl = `${cleanApiURL}/auth/logout`;
 
   // Close dropdown when clicking outside
   useEffect(() => {

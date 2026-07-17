@@ -10,11 +10,21 @@ import { X, Plus, Minus, ShoppingBag } from 'lucide-react';
 import axios from 'axios';
 
 // Globally intercept all outgoing axios calls to automatically attach Bearer token if it exists in localStorage
+// and clean up any double slashes in URLs.
 axios.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    
+    if (config.url) {
+      const protocolParts = config.url.split('://');
+      if (protocolParts.length === 2) {
+        config.url = protocolParts[0] + '://' + protocolParts[1].replace(/\/+/g, '/');
+      } else {
+        config.url = config.url.replace(/\/+/g, '/');
+      }
     }
     return config;
   },
