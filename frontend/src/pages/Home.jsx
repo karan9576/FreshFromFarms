@@ -143,22 +143,22 @@ function ProductCard({ product, addToCart, cart = [], updateQuantity }) {
       clone.style.height = `${imgRect.height}px`;
       clone.style.zIndex = '10000';
       clone.style.pointerEvents = 'none';
-      clone.style.transition = 'all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1)';
+      clone.style.transition = 'all 1.1s cubic-bezier(0.25, 1, 0.5, 1)';
       clone.style.opacity = '1';
       clone.style.transform = 'scale(1) rotate(0deg)';
       clone.style.filter = 'drop-shadow(0 10px 15px rgba(0, 0, 0, 0.15))';
       
       document.body.appendChild(clone);
 
-      // Transition properties on next paint
-      requestAnimationFrame(() => {
+      // Transition properties on next paint (delayed to prevent browser transition batching/skipping)
+      setTimeout(() => {
         clone.style.left = `${cartRect.left + cartRect.width / 2 - 15}px`;
         clone.style.top = `${cartRect.top + cartRect.height / 2 - 15}px`;
-        clone.style.width = '30px';
-        clone.style.height = '30px';
-        clone.style.opacity = '0.2';
-        clone.style.transform = 'scale(0.2) rotate(360deg)';
-      });
+        clone.style.width = '35px';
+        clone.style.height = '35px';
+        clone.style.opacity = '0.15';
+        clone.style.transform = 'scale(0.25) rotate(720deg)';
+      }, 50);
 
       // Cleanup and bump cart button state
       setTimeout(() => {
@@ -176,7 +176,7 @@ function ProductCard({ product, addToCart, cart = [], updateQuantity }) {
             mobileToggle.classList.remove('bump');
           }
         }, 500);
-      }, 800);
+      }, 1150);
     }
   };
 
