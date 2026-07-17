@@ -104,6 +104,15 @@ app.get('/test-email', async (req, res) => {
   }
 });
 
+app.get('/diag', (req, res) => {
+  res.json({
+    FRONTEND_URL: process.env.FRONTEND_URL,
+    NODE_ENV: process.env.NODE_ENV,
+    PORT: process.env.PORT,
+    JWT_SECRET_DEFINED: !!process.env.JWT_SECRET
+  });
+});
+
 app.get('/', (req, res) => {
   res.send('FreshFromFarms API is running');
 });
