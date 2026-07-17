@@ -179,13 +179,13 @@ export default function MyOrders() {
   // 1. Render Guest tracking interface
   if (isGuest) {
     return (
-      <div className="dashboard-container" style={{ maxWidth: '600px', margin: '0 auto' }}>
+      <div className="dashboard-container" style={{ maxWidth: '850px', margin: '0 auto' }}>
         <h2 style={{ fontWeight: 800, marginBottom: '0.5rem', textAlign: 'center' }}>Track Your Order</h2>
         <p style={{ color: 'var(--text-muted)', textAlign: 'center', marginBottom: '2rem' }}>
-          Enter your receipt parameters below to check fulfillment progress.
+          Enter your email below to check fulfillment progress.
         </p>
 
-        <div className="glass-panel" style={{ padding: '2rem' }}>
+        <div className="glass-panel" style={{ padding: '2rem', maxWidth: '550px', margin: '0 auto' }}>
           <h3 style={{ marginBottom: '1.5rem', fontWeight: 800 }}>Search Guest Order</h3>
           <form onSubmit={handleGuestSearch} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div className="form-group" style={{ margin: 0 }}>
