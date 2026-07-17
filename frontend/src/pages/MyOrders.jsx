@@ -73,20 +73,20 @@ export default function MyOrders() {
     return (
       <div key={order._id} className="glass-panel" style={{ padding: '2rem', marginTop: '1.5rem' }}>
         {/* Order Top Banner */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', borderBottom: '1px solid rgba(12, 56, 35, 0.1)', paddingBottom: '1rem', marginBottom: '1.5rem' }}>
+        <div className="order-details-header">
           <div>
             <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>ORDER REFERENCE ID</span>
             <h4 style={{ fontWeight: 800, color: 'var(--primary-color)', marginTop: '0.1rem' }}>{order._id.toUpperCase()}</h4>
             <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Placed: {new Date(order.createdAt).toLocaleString()}</span>
           </div>
-          <div style={{ textAlign: 'right' }}>
+          <div className="order-details-header-amount">
             <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>TOTAL PAID AMOUNT</span>
             <h3 style={{ fontWeight: 800, color: 'var(--bg-dark)' }}>₹{order.totalAmount}</h3>
           </div>
         </div>
 
         {/* Main details body */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '2rem', flexWrap: 'wrap' }}>
+        <div className="order-details-grid">
           
           {/* Items list and shipping info */}
           <div>
@@ -111,7 +111,7 @@ export default function MyOrders() {
           </div>
 
           {/* Status Progress Timeline */}
-          <div style={{ background: 'rgba(255,255,255,0.4)', padding: '1.5rem', borderRadius: '16px', border: '1px solid rgba(12, 56, 35, 0.06)' }}>
+          <div className="order-tracker-card">
             <h5 style={{ fontWeight: 700, color: 'var(--text-dark)', marginBottom: '1.5rem', textAlign: 'center' }}>Delivery Status Tracker</h5>
             
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', padding: '0 1rem' }}>

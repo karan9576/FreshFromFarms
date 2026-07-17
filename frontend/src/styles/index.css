@@ -1613,3 +1613,58 @@ body {
   0% { transform: scale(0.5); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
 }
+
+/* Responsive My Orders styling */
+.order-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+  border-bottom: 1px solid rgba(12, 56, 35, 0.1);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+}
+
+.order-details-header-amount {
+  text-align: right;
+}
+
+.order-details-grid {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 2rem;
+  width: 100%;
+}
+
+.order-tracker-card {
+  background: rgba(255, 255, 255, 0.45);
+  padding: 1.5rem;
+  border-radius: 16px;
+  border: 1px solid rgba(12, 56, 35, 0.06);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .order-details-grid {
+    grid-template-columns: 1fr;
+    gap: 1.8rem;
+  }
+  
+  .order-details-header-amount {
+    text-align: left;
+  }
+  
+  .order-tracker-card {
+    padding: 1.2rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .order-details-header {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+}
