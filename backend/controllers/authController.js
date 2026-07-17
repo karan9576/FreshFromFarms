@@ -54,26 +54,40 @@ exports.getMyOrders = async (req, res) => {
 exports.trackGuestOrder = async (req, res) => {
   try {
     const { orderId, email } = req.body;
-    if (!orderId || !email) {
-      return res.status(400).json({ message: 'Order ID and Email are required' });
+    if (!email) {
+      return res.status(400).json({ message: 'Email address is required to track orders.' });
     }
 
-    if (!mongoose.Types.ObjectId.isValid(orderId)) {
-      return res.status(404).json({ message: 'Order not found. Invalid ID format.' });
+    const emailRegex = new RegExp(`^${email.trim()}$`, 'i');
+
+    // If orderId is provided, track that specific order
+    if (orderId && orderId.trim()) {
+      if (!mongoose.Types.ObjectId.isValid(orderId.trim())) {
+        return res.status(400).json({ message: 'Invalid Order ID format. It must be a 24-character hex string.' });
+      }
+
+      const order = await Order.findOne({
+        _id: orderId.trim(),
+        email: emailRegex
+      });
+
+      if (!order) {
+        return res.status(404).json({ message: 'No matching order found for this Order ID and email.' });
+      }
+
+      return res.json([order]); // Return as array for consistent frontend mapping
     }
 
-    const order = await Order.findOne({
-      _id: orderId,
-      email: new RegExp(`^${email.trim()}$`, 'i') // Case-insensitive email comparison
-    });
-
-    if (!order) {
-      return res.status(404).json({ message: 'No matching order found for this ID and email.' });
+    // If orderId is NOT provided, return all guest orders associated with this email
+    const orders = await Order.find({ email: emailRegex }).sort({ createdAt: -1 });
+    
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ message: 'No orders found associated with this email address.' });
     }
 
-    res.json(order);
+    res.json(orders);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Error tracking order' });
+    res.status(500).json({ message: 'Error tracking orders' });
   }
 };

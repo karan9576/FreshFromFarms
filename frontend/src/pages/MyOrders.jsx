@@ -9,7 +9,7 @@ export default function MyOrders() {
   // Guest search form states
   const [searchOrderId, setSearchOrderId] = useState('');
   const [searchEmail, setSearchEmail] = useState('');
-  const [guestOrder, setGuestOrder] = useState(null);
+  const [guestOrders, setGuestOrders] = useState([]);
   const [guestSearchLoading, setGuestSearchLoading] = useState(false);
   const [guestError, setGuestError] = useState('');
 
@@ -34,8 +34,8 @@ export default function MyOrders() {
 
   const handleGuestSearch = async (e) => {
     e.preventDefault();
-    if (!searchOrderId || !searchEmail) {
-      setGuestError('Please enter both your Order ID and Email.');
+    if (!searchEmail) {
+      setGuestError('Please enter your Email.');
       return;
     }
 
@@ -43,14 +43,14 @@ export default function MyOrders() {
       setGuestSearchLoading(true);
       setGuestError('');
       const res = await axios.post(`${API_URL}/auth/track-guest-order`, {
-        orderId: searchOrderId.trim(),
+        orderId: searchOrderId.trim() || undefined,
         email: searchEmail.trim()
       });
-      setGuestOrder(res.data);
+      setGuestOrders(res.data);
     } catch (err) {
       console.error(err);
-      setGuestOrder(null);
-      setGuestError(err.response?.data?.message || 'No matching order found. Please check your inputs.');
+      setGuestOrders([]);
+      setGuestError(err.response?.data?.message || 'No matching orders found. Please check your inputs.');
     } finally {
       setGuestSearchLoading(false);
     }
@@ -189,14 +189,13 @@ export default function MyOrders() {
           <h3 style={{ marginBottom: '1.5rem', fontWeight: 800 }}>Search Guest Order</h3>
           <form onSubmit={handleGuestSearch} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div className="form-group" style={{ margin: 0 }}>
-              <label style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: '0.4rem', display: 'block' }}>Order Reference ID*</label>
+              <label style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: '0.4rem', display: 'block' }}>Order Reference ID (Optional)</label>
               <input 
                 type="text" 
-                placeholder="Enter 24-character database Order ID" 
+                placeholder="Enter 24-character Order ID if known" 
                 value={searchOrderId} 
                 onChange={e => setSearchOrderId(e.target.value)}
                 style={{ padding: '0.75rem 1rem', fontSize: '0.9rem', background: '#fff', border: '1px solid var(--border-color)', borderRadius: '8px', width: '100%', outline: 'none' }} 
-                required 
               />
             </div>
             
@@ -225,11 +224,15 @@ export default function MyOrders() {
           </div>
         </div>
 
-        {/* Display single tracked guest order if found */}
-        {guestOrder && (
+        {/* Display list of tracked guest orders if found */}
+        {guestOrders && guestOrders.length > 0 && (
           <div style={{ marginTop: '2rem' }}>
-            <h3 style={{ textAlign: 'center', fontWeight: 800 }}>Tracking Result</h3>
-            {renderOrderCard(guestOrder)}
+            <h3 style={{ textAlign: 'center', fontWeight: 800, color: 'var(--bg-dark)' }}>
+              Tracking Result ({guestOrders.length} {guestOrders.length === 1 ? 'Order' : 'Orders'})
+            </h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginTop: '1rem' }}>
+              {guestOrders.map(order => renderOrderCard(order))}
+            </div>
           </div>
         )}
       </div>
