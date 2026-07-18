@@ -3,9 +3,10 @@ const nodemailer = require('nodemailer');
 
 const sendMailHelper = async (mailOptions) => {
   let brevoSent = false;
+  const cleanApiKey = process.env.BREVO_API_KEY ? process.env.BREVO_API_KEY.trim() : null;
 
   // PRIMARY: Brevo REST API via axios (works on Render free tier — no SMTP needed)
-  if (process.env.BREVO_API_KEY) {
+  if (cleanApiKey) {
     try {
       await axios.post(
         'https://api.brevo.com/v3/smtp/email',
@@ -20,7 +21,7 @@ const sendMailHelper = async (mailOptions) => {
         },
         {
           headers: {
-            'api-key': process.env.BREVO_API_KEY,
+            'api-key': cleanApiKey,
             'Content-Type': 'application/json'
           }
         }
@@ -39,9 +40,12 @@ const sendMailHelper = async (mailOptions) => {
     try {
       const transporter = nodemailer.createTransport({
         host: process.env.SMTP_HOST || 'smtp.gmail.com',
-        port: 587,
-        secure: false,
-        auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS }
+        port: parseInt(process.env.SMTP_PORT) || 587,
+        secure: process.env.SMTP_PORT === '465',
+        auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+        connectionTimeout: 10000, // Fail fast (10s) if blocked by cloud IP restrictions
+        greetingTimeout: 10000,
+        socketTimeout: 10000
       });
       const info = await transporter.sendMail({
         from: `"FreshFromFarms" <${process.env.SMTP_USER}>`,
