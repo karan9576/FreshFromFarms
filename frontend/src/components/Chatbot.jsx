@@ -6,7 +6,7 @@ export default function Chatbot() {
   const [messages, setMessages] = useState([
     {
       sender: 'assistant',
-      text: "Hi there! 🍿 I am your Fresh Farm AI Assistant. Ask me anything about our premium, preservative-free Makhana (foxnuts), shipping rates, coupon codes, or compliance!"
+      text: "Welcome to FreshFromFarms. I am your Customer Service Assistant. How may I help you with our premium water-cultivated Makhana (Indian Foxnuts), shipping rates, discount coupons, or compliance details today?"
     }
   ]);
   const [inputText, setInputText] = useState('');
@@ -42,7 +42,7 @@ export default function Chatbot() {
     } catch (err) {
       setMessages(prev => [...prev, { 
         sender: 'assistant', 
-        text: "Sorry, I am facing a connection timeout. Please try asking again shortly!" 
+        text: "I apologize, but I am facing a connection timeout. Please try resubmitting your inquiry shortly." 
       }]);
     } finally {
       setLoading(false);
@@ -63,7 +63,7 @@ export default function Chatbot() {
       // Bullet point formatter
       if (formattedLine.trim().startsWith('•') || formattedLine.trim().startsWith('-')) {
         return (
-          <li key={idx} style={{ marginLeft: '1rem', listStyleType: 'disc', marginBottom: '0.3rem' }} 
+          <li key={idx} style={{ marginLeft: '1rem', listStyleType: 'disc', marginBottom: '0.4rem', color: '#334e3f' }} 
               dangerouslySetInnerHTML={{ __html: formattedLine.replace(/^[•-]\s*/, '') }} />
         );
       }
@@ -72,14 +72,14 @@ export default function Chatbot() {
   };
 
   const suggestionChips = [
-    { label: '🎟️ Discount Coupon', query: 'Do you have any discount coupons?' },
-    { label: '💰 Makhana Prices', query: 'What are the prices for Raw and Salted Makhana?' },
-    { label: '🚚 Shipping Charges', query: 'What are your delivery fees and shipping charges?' },
-    { label: '🛡️ Compliance Info', query: 'What are your FSSAI and GST registration details?' }
+    { label: 'Discount Coupons', query: 'Do you have any discount coupons?' },
+    { label: 'Makhana Pricing', query: 'What are the prices for Raw and Salted Makhana?' },
+    { label: 'Delivery & Shipping', query: 'What are your delivery fees and shipping charges?' },
+    { label: 'FSSAI & GSTIN Compliance', query: 'What are your FSSAI and GST registration details?' }
   ];
 
   return (
-    <div style={{ position: 'fixed', bottom: '25px', right: '25px', zIndex: 9999, fontFamily: "'Inter', sans-serif" }}>
+    <div style={{ position: 'fixed', bottom: '30px', right: '30px', zIndex: 9999, fontFamily: "'Inter', -apple-system, sans-serif" }}>
       {/* Floating Toggle Button */}
       <button 
         onClick={() => setIsOpen(!isOpen)}
@@ -89,24 +89,24 @@ export default function Chatbot() {
           borderRadius: '50%',
           backgroundColor: 'var(--primary-color, #0c3823)',
           border: 'none',
-          boxShadow: '0 8px 24px rgba(12, 56, 35, 0.3)',
+          boxShadow: '0 8px 24px rgba(12, 56, 35, 0.25)',
           cursor: 'pointer',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          transition: 'all 0.3s ease',
+          transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
           outline: 'none'
         }}
-        onMouseOver={e => e.currentTarget.style.transform = 'scale(1.08)'}
+        onMouseOver={e => e.currentTarget.style.transform = 'scale(1.06)'}
         onMouseOut={e => e.currentTarget.style.transform = 'scale(1)'}
       >
         {isOpen ? (
-          <svg style={{ width: '24px', height: '24px', fill: '#fff' }} viewBox="0 0 24 24">
+          <svg style={{ width: '22px', height: '22px', fill: '#fff' }} viewBox="0 0 24 24">
             <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
           </svg>
         ) : (
-          <svg style={{ width: '26px', height: '26px', fill: '#fff' }} viewBox="0 0 24 24">
-            <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/>
+          <svg style={{ width: '24px', height: '24px', fill: '#fff' }} viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12v5c0 1.66 1.34 3 3 3h3v-8H4v-2c0-4.41 3.59-8 8-8s8 3.59 8 8v2h-4v8h4c1.66 0 3-1.34 3-3v-5c0-5.52-4.48-10-10-10z"/>
           </svg>
         )}
       </button>
@@ -118,12 +118,11 @@ export default function Chatbot() {
           bottom: '75px',
           right: '0',
           width: '380px',
-          height: '520px',
-          backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          backdropFilter: 'blur(16px)',
+          height: '540px',
+          backgroundColor: '#ffffff',
           borderRadius: '16px',
-          boxShadow: '0 12px 36px rgba(12, 56, 35, 0.18)',
-          border: '1px solid rgba(12, 56, 35, 0.1)',
+          boxShadow: '0 16px 40px rgba(12, 56, 35, 0.15)',
+          border: '1px solid rgba(12, 56, 35, 0.08)',
           display: 'flex',
           flexDirection: 'column',
           overflow: 'hidden',
@@ -132,29 +131,32 @@ export default function Chatbot() {
         }}>
           {/* Header */}
           <div style={{
-            padding: '1.2rem',
+            padding: '1.25rem 1.5rem',
             background: 'var(--primary-color, #0c3823)',
             color: '#fff',
             display: 'flex',
             alignItems: 'center',
-            gap: '0.8rem',
-            borderBottom: '1px solid rgba(255,255,255,0.1)'
+            gap: '0.9rem',
+            borderBottom: '1px solid rgba(255,255,255,0.05)'
           }}>
             <div style={{
-              width: '36px',
-              height: '36px',
+              width: '38px',
+              height: '38px',
               borderRadius: '50%',
-              background: 'rgba(255,255,255,0.15)',
+              background: 'rgba(255,255,255,0.12)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: '1.2rem'
-            }}>🍿</div>
+              fontWeight: '800',
+              fontSize: '0.85rem',
+              letterSpacing: '0.5px',
+              color: '#fff'
+            }}>FFF</div>
             <div style={{ flex: 1 }}>
-              <h4 style={{ margin: 0, fontWeight: 700, fontSize: '0.95rem' }}>Fresh Farm Assistant</h4>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.75rem', opacity: 0.8, marginTop: '0.1rem' }}>
-                <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#2ecc71', display: 'inline-block' }}></span>
-                Online & Ready
+              <h4 style={{ margin: 0, fontWeight: 700, fontSize: '0.95rem', letterSpacing: '0.2px' }}>FreshFromFarms Support</h4>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontSize: '0.75rem', opacity: 0.85, marginTop: '0.2rem' }}>
+                <span className="pulsing-green-dot" style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#2ecc71', display: 'inline-block' }}></span>
+                Customer Service Agent
               </div>
             </div>
           </div>
@@ -162,12 +164,12 @@ export default function Chatbot() {
           {/* Messages Scroll Area */}
           <div style={{
             flex: 1,
-            padding: '1rem',
+            padding: '1.2rem',
             overflowY: 'auto',
             display: 'flex',
             flexDirection: 'column',
-            gap: '0.8rem',
-            background: '#fcfdfc'
+            gap: '1rem',
+            background: '#fafbfa'
           }}>
             {messages.map((msg, i) => (
               <div 
@@ -175,13 +177,14 @@ export default function Chatbot() {
                 style={{
                   alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start',
                   maxWidth: '82%',
-                  padding: '0.75rem 1rem',
+                  padding: '0.8rem 1.1rem',
                   borderRadius: msg.sender === 'user' ? '12px 12px 2px 12px' : '12px 12px 12px 2px',
-                  background: msg.sender === 'user' ? 'var(--primary-color, #0c3823)' : '#f0f4f1',
-                  color: msg.sender === 'user' ? '#fff' : 'var(--text-dark, #2c3e50)',
+                  background: msg.sender === 'user' ? 'var(--primary-color, #0c3823)' : '#ffffff',
+                  color: msg.sender === 'user' ? '#fff' : '#243a2e',
                   fontSize: '0.85rem',
-                  lineHeight: '1.45',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.02)'
+                  lineHeight: '1.5',
+                  boxShadow: msg.sender === 'user' ? 'none' : '0 2px 6px rgba(12, 56, 35, 0.04)',
+                  border: msg.sender === 'user' ? 'none' : '1px solid rgba(12, 56, 35, 0.06)'
                 }}
               >
                 {formatText(msg.text)}
@@ -191,18 +194,17 @@ export default function Chatbot() {
             {loading && (
               <div style={{
                 alignSelf: 'flex-start',
-                padding: '0.75rem 1rem',
+                padding: '0.8rem 1.1rem',
                 borderRadius: '12px 12px 12px 2px',
-                background: '#f0f4f1',
-                color: '#555',
-                fontSize: '0.85rem',
+                background: '#ffffff',
+                border: '1px solid rgba(12, 56, 35, 0.06)',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.3rem'
+                gap: '0.35rem'
               }}>
-                <span className="dot" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#555', animation: 'chatBounce 1.2s infinite' }}></span>
-                <span className="dot" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#555', animation: 'chatBounce 1.2s infinite 0.2s' }}></span>
-                <span className="dot" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#555', animation: 'chatBounce 1.2s infinite 0.4s' }}></span>
+                <span className="dot" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#5a7065', animation: 'chatBounce 1.2s infinite' }}></span>
+                <span className="dot" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#5a7065', animation: 'chatBounce 1.2s infinite 0.2s' }}></span>
+                <span className="dot" style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#5a7065', animation: 'chatBounce 1.2s infinite 0.4s' }}></span>
               </div>
             )}
             <div ref={messagesEndRef} />
@@ -210,11 +212,11 @@ export default function Chatbot() {
 
           {/* Quick Suggestions */}
           <div style={{
-            padding: '0.5rem 0.8rem',
-            background: '#f5f7f5',
-            borderTop: '1px solid rgba(12, 56, 35, 0.05)',
+            padding: '0.6rem 0.9rem',
+            background: '#ffffff',
+            borderTop: '1px solid rgba(12, 56, 35, 0.06)',
             display: 'flex',
-            gap: '0.4rem',
+            gap: '0.5rem',
             overflowX: 'auto',
             whiteSpace: 'nowrap',
             scrollbarWidth: 'none'
@@ -225,22 +227,23 @@ export default function Chatbot() {
                 onClick={() => handleSend(chip.query)}
                 style={{
                   fontSize: '0.75rem',
-                  padding: '0.35rem 0.75rem',
-                  borderRadius: '50px',
-                  border: '1px solid rgba(12, 56, 35, 0.12)',
-                  background: '#fff',
+                  padding: '0.4rem 0.85rem',
+                  borderRadius: '6px',
+                  border: '1px solid rgba(12, 56, 35, 0.1)',
+                  background: '#fafbfa',
                   color: 'var(--primary-color, #0c3823)',
                   cursor: 'pointer',
                   fontWeight: 600,
-                  transition: 'all 0.2s ease'
+                  transition: 'all 0.2s ease',
+                  outline: 'none'
                 }}
                 onMouseOver={e => {
                   e.currentTarget.style.borderColor = 'var(--primary-color)';
-                  e.currentTarget.style.background = 'rgba(12, 56, 35, 0.04)';
+                  e.currentTarget.style.background = '#ffffff';
                 }}
                 onMouseOut={e => {
-                  e.currentTarget.style.borderColor = 'rgba(12, 56, 35, 0.12)';
-                  e.currentTarget.style.background = '#fff';
+                  e.currentTarget.style.borderColor = 'rgba(12, 56, 35, 0.1)';
+                  e.currentTarget.style.background = '#fafbfa';
                 }}
               >
                 {chip.label}
@@ -250,37 +253,47 @@ export default function Chatbot() {
 
           {/* Footer Input Bar */}
           <div style={{
-            padding: '0.8rem',
-            background: '#fff',
+            padding: '1rem',
+            background: '#ffffff',
             borderTop: '1px solid rgba(12, 56, 35, 0.08)',
             display: 'flex',
-            gap: '0.5rem',
+            gap: '0.6rem',
             alignItems: 'center'
           }}>
             <input 
               type="text" 
-              placeholder="Ask anything..." 
+              placeholder="Ask a question..." 
               value={inputText}
               onChange={e => setInputText(e.target.value)}
               onKeyDown={handleKeyPress}
               disabled={loading}
               style={{
                 flex: 1,
-                padding: '0.65rem 0.9rem',
-                borderRadius: '50px',
-                border: '1px solid #d0d7d1',
+                padding: '0.75rem 1rem',
+                borderRadius: '8px',
+                border: '1px solid #d9e2db',
                 outline: 'none',
                 fontSize: '0.85rem',
-                background: '#fff'
+                background: '#fafbfa',
+                transition: 'all 0.2s ease',
+                color: '#243a2e'
+              }}
+              onFocus={e => {
+                e.currentTarget.style.borderColor = 'var(--primary-color)';
+                e.currentTarget.style.backgroundColor = '#ffffff';
+              }}
+              onBlur={e => {
+                e.currentTarget.style.borderColor = '#d9e2db';
+                e.currentTarget.style.backgroundColor = '#fafbfa';
               }}
             />
             <button 
               onClick={() => handleSend()}
               disabled={loading || !inputText.trim()}
               style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: '50%',
+                width: '40px',
+                height: '40px',
+                borderRadius: '8px',
                 backgroundColor: 'var(--primary-color, #0c3823)',
                 color: '#fff',
                 border: 'none',
@@ -289,7 +302,7 @@ export default function Chatbot() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 opacity: (loading || !inputText.trim()) ? 0.5 : 1,
-                transition: 'opacity 0.2s ease',
+                transition: 'all 0.2s ease',
                 outline: 'none'
               }}
             >
@@ -306,7 +319,7 @@ export default function Chatbot() {
         @keyframes chatSlideIn {
           from {
             opacity: 0;
-            transform: translateY(20px) scale(0.95);
+            transform: translateY(20px) scale(0.97);
           }
           to {
             opacity: 1;
@@ -315,7 +328,25 @@ export default function Chatbot() {
         }
         @keyframes chatBounce {
           0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-5px); }
+          50% { transform: translateY(-4px); }
+        }
+        .pulsing-green-dot {
+          box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7);
+          animation: greenPulse 2s infinite;
+        }
+        @keyframes greenPulse {
+          0% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7);
+          }
+          70% {
+            transform: scale(1);
+            box-shadow: 0 0 0 5px rgba(46, 204, 113, 0);
+          }
+          100% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
+          }
         }
       `}</style>
     </div>
