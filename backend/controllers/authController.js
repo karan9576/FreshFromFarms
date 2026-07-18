@@ -448,7 +448,15 @@ exports.chatWithAssistant = async (req, res) => {
       const apiKeyClean = process.env.GEMINI_API_KEY.trim().replace(/^['"]|['"]$/g, '');
       if (apiKeyClean && apiKeyClean !== 'undefined' && apiKeyClean !== 'null') {
         try {
-          const models = ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-1.5-pro', 'gemini-1.0-pro'];
+          const models = [
+            'gemini-3.5-flash',
+            'gemini-3-flash-preview',
+            'gemini-2.0-flash',
+            'gemini-flash-latest',
+            'gemini-1.5-flash',
+            'gemini-1.5-flash-latest',
+            'gemini-1.5-pro'
+          ];
           
           // Map messages format: user -> user, assistant -> model
           const contents = [
