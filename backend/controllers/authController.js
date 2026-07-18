@@ -445,50 +445,72 @@ exports.chatWithAssistant = async (req, res) => {
 
     // 1. Check if Gemini API key is configured
     if (process.env.GEMINI_API_KEY) {
-      try {
-        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
-        
-        // Map messages format: user -> user, assistant -> model
-        const contents = [
-          {
-            role: 'user',
-            parts: [{ text: SYSTEM_PROMPT }]
-          },
-          {
-            role: 'model',
-            parts: [{ text: "Understood. I will answer customer queries strictly according to the FreshFromFarms details provided." }]
-          }
-        ];
+      const apiKeyClean = process.env.GEMINI_API_KEY.trim().replace(/^['"]|['"]$/g, '');
+      if (apiKeyClean && apiKeyClean !== 'undefined' && apiKeyClean !== 'null') {
+        try {
+          const models = ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-1.5-pro', 'gemini-1.0-pro'];
+          
+          // Map messages format: user -> user, assistant -> model
+          const contents = [
+            {
+              role: 'user',
+              parts: [{ text: SYSTEM_PROMPT }]
+            },
+            {
+              role: 'model',
+              parts: [{ text: "Understood. I will answer customer queries strictly according to the FreshFromFarms details provided." }]
+            }
+          ];
 
-        // Append historical messages (limit to last 6 messages to save context limits)
-        const activeHistory = messages.slice(-6);
-        activeHistory.forEach(msg => {
-          contents.push({
-            role: msg.sender === 'user' ? 'user' : 'model',
-            parts: [{ text: msg.text }]
+          // Append historical messages (limit to last 6 messages to save context limits)
+          const activeHistory = messages.slice(-6);
+          activeHistory.forEach(msg => {
+            contents.push({
+              role: msg.sender === 'user' ? 'user' : 'model',
+              parts: [{ text: msg.text }]
+            });
           });
-        });
 
-        const geminiRes = await fetch(geminiUrl, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ contents })
-        });
+          // Try models sequentially if we get a 404
+          for (const model of models) {
+            try {
+              const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKeyClean}`;
+              const geminiRes = await fetch(geminiUrl, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ contents })
+              });
 
-        if (!geminiRes.ok) {
-          throw new Error(`Request failed with status code ${geminiRes.status}`);
+              if (geminiRes.status === 404) {
+                console.warn(`Model ${model} returned 404. Trying next model...`);
+                continue;
+              }
+
+              if (!geminiRes.ok) {
+                throw new Error(`Request failed with status code ${geminiRes.status}`);
+              }
+
+              const geminiData = await geminiRes.json();
+              const replyText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+              if (replyText) {
+                return res.json({ text: replyText.trim() });
+              }
+            } catch (modelErr) {
+              console.error(`Error with model ${model}:`, modelErr.message);
+              // If the error was a 404, we continue to the next model in the list
+              if (modelErr.message.includes('404')) {
+                continue;
+              }
+              // If it is any other error (like 429 rate limit or network error), we throw it to fall back
+              throw modelErr;
+            }
+          }
+        } catch (geminiErr) {
+          console.error('Gemini API call failed, falling back to local search:', geminiErr.message);
         }
-
-        const geminiData = await geminiRes.json();
-        const replyText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-        if (replyText) {
-          return res.json({ text: replyText.trim() });
-        }
-      } catch (geminiErr) {
-        console.error('Gemini API call failed, falling back to local search:', geminiErr.message);
       }
     }
 
