@@ -554,11 +554,11 @@ export default function Home({ addToCart, cart = [], updateQuantity }) {
             <p style={{ fontSize: '0.9rem', marginBottom: '0.4rem', color: 'rgba(255,255,255,0.7)' }}>📞 +91 9576600246</p>
             <p style={{ fontSize: '0.9rem', marginBottom: '1.2rem', color: 'rgba(255,255,255,0.7)' }}>✉️ support@freshfromfarms.com</p>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '0.4rem 0' }}>
-              <img src="/fssai.png" alt="FSSAI Logo" style={{ height: '18px', background: '#ffffff', padding: '2px', borderRadius: '3px', objectFit: 'contain' }} />
+              <img src="/fssai.png" alt="FSSAI Logo" style={{ height: '22px', objectFit: 'contain' }} />
               <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.5)' }}><strong>FSSAI:</strong> 20426121001137</span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '0.4rem 0' }}>
-              <img src="/gst.png" alt="GST Logo" style={{ height: '16px', background: '#ffffff', padding: '2px', borderRadius: '3px', objectFit: 'contain' }} />
+              <img src="/gst.png" alt="GST Logo" style={{ height: '18px', objectFit: 'contain' }} />
               <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.5)' }}><strong>GSTIN:</strong> 10ACJFA8885A1ZL</span>
             </div>
           </div>
