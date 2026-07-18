@@ -45,7 +45,7 @@ exports.verifyPayment = async (req, res) => {
       await Stat.findOneAndUpdate(
         { date: today },
         { $inc: { revenue: amountInRupees } },
-        { upsert: true, new: true, setDefaultsOnInsert: true }
+        { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
       );
 
       // 3. Save verified Order record in database

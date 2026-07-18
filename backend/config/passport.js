@@ -49,7 +49,7 @@ module.exports = function (passport) {
             await Stat.findOneAndUpdate(
               { date: today },
               { $inc: { signups: 1 } },
-              { upsert: true, new: true, setDefaultsOnInsert: true }
+              { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
             );
 
             done(null, user);

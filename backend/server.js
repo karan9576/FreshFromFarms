@@ -77,7 +77,7 @@ app.use(async (req, res, next) => {
       await Stat.findOneAndUpdate(
         { date: today },
         { $inc: { visits: 1 } },
-        { upsert: true, new: true, setDefaultsOnInsert: true }
+        { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
       );
     } catch (error) {
       console.error('Stat tracking error:', error);

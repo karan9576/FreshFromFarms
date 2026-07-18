@@ -296,7 +296,7 @@ exports.verifyEmail = async (req, res) => {
       await Stat.findOneAndUpdate(
         { date: today },
         { $inc: { signups: 1 } },
-        { upsert: true, new: true, setDefaultsOnInsert: true }
+        { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
       );
     } catch (statErr) {
       console.error('Stat update failed:', statErr.message);
