@@ -467,6 +467,66 @@ export default function Home({ addToCart, cart = [], updateQuantity }) {
         </div>
       </section>
 
+      {/* Contact Us Section */}
+      <section id="contact" className="contact-section">
+        <div className="contact-container">
+          <div className="contact-info">
+            <span className="contact-badge">GET IN TOUCH</span>
+            <h2>We'd Love to Hear From You</h2>
+            <p className="contact-desc">
+              Have questions about our organic harvesting, bulk orders, or product range? Sourced straight from the farms of India, we are here to help!
+            </p>
+            
+            <div className="contact-details">
+              <div className="contact-item">
+                <span className="contact-icon">📞</span>
+                <div>
+                  <h4>Call / WhatsApp Us</h4>
+                  <p><a href="tel:+919870415174">+91 9870415174</a></p>
+                  <p><a href="tel:+919576600246">+91 9576600246</a></p>
+                </div>
+              </div>
+
+              <div className="contact-item">
+                <span className="contact-icon">✉️</span>
+                <div>
+                  <h4>Email Support</h4>
+                  <p><a href="mailto:support@freshfromfarms.com">support@freshfromfarms.com</a></p>
+                </div>
+              </div>
+
+              <div className="contact-item">
+                <span className="contact-icon">🛡️</span>
+                <div>
+                  <h4>Compliance & Registrations</h4>
+                  <p><strong>FSSAI Licence No:</strong> 20426121001137</p>
+                  <p><strong>GST Registration No:</strong> 10ACJFA8885A1ZL</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="contact-form-panel glass-panel">
+            <h3>Send a Message</h3>
+            <form onSubmit={(e) => { e.preventDefault(); alert('Thank you! Your message has been received. We will get back to you shortly.'); e.target.reset(); }}>
+              <div className="form-group">
+                <label htmlFor="contact-name">Full Name</label>
+                <input type="text" id="contact-name" placeholder="Enter your name" required />
+              </div>
+              <div className="form-group">
+                <label htmlFor="contact-email">Email Address</label>
+                <input type="email" id="contact-email" placeholder="Enter your email" required />
+              </div>
+              <div className="form-group">
+                <label htmlFor="contact-message">Your Message</label>
+                <textarea id="contact-message" rows="4" placeholder="How can we help you?" required></textarea>
+              </div>
+              <button type="submit" className="btn-primary" style={{ width: '100%' }}>Send Message</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
       {/* Footer (Ref 2) */}
       <footer className="footer">
         <div className="footer-grid">
@@ -481,6 +541,14 @@ export default function Home({ addToCart, cart = [], updateQuantity }) {
               <li><a href="#shop">Shop</a></li>
               <li><a href="#faq">FAQ</a></li>
             </ul>
+          </div>
+          <div className="footer-col">
+            <h3>Contact & Compliance</h3>
+            <p style={{ fontSize: '0.9rem', marginBottom: '0.4rem', color: 'rgba(255,255,255,0.7)' }}>📞 +91 9870415174</p>
+            <p style={{ fontSize: '0.9rem', marginBottom: '0.4rem', color: 'rgba(255,255,255,0.7)' }}>📞 +91 9576600246</p>
+            <p style={{ fontSize: '0.9rem', marginBottom: '1.2rem', color: 'rgba(255,255,255,0.7)' }}>✉️ support@freshfromfarms.com</p>
+            <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.4)', margin: '0.2rem 0' }}><strong>GSTIN:</strong> 10ACJFA8885A1ZL</p>
+            <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.4)', margin: '0.2rem 0' }}><strong>FSSAI:</strong> 20426121001137</p>
           </div>
           <div className="footer-col">
             <h3>Join the Fresh Farm</h3>

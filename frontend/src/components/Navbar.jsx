@@ -64,6 +64,14 @@ export default function Navbar({ cartCount, onCartClick, user, setUser }) {
         <li>
           <Link to="/my-orders" className={location.pathname === '/my-orders' ? 'active-link' : ''}>Track Orders</Link>
         </li>
+        <li>
+          <a href="/#contact" onClick={(e) => {
+            if (location.pathname === '/') {
+              e.preventDefault();
+              document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+            }
+          }}>Contact Us</a>
+        </li>
 
         {/* Profile / Login */}
         {user ? (
