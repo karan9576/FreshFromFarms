@@ -144,7 +144,7 @@ export default function AdminDashboard() {
   return (
     <div className="dashboard-container">
       {/* Header Panel */}
-      <div className="dashboard-header glass-panel" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+      <div className="dashboard-header glass-panel" style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <h2 style={{ fontWeight: 800 }}>Admin Console</h2>
         <div>
           <button 
@@ -194,7 +194,7 @@ export default function AdminDashboard() {
 
       {/* Manage Products Tab */}
       {activeTab === 'products' && (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', alignItems: 'start' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '2rem', alignItems: 'start' }}>
           
           {/* Add Product Form */}
           <div className="glass-panel" style={{ padding: '2rem' }}>
@@ -329,6 +329,8 @@ export default function AdminDashboard() {
                     key={product._id} 
                     style={{ 
                       display: 'flex', 
+                      flexWrap: 'wrap',
+                      gap: '1rem',
                       justifyContent: 'space-between', 
                       alignItems: 'center', 
                       padding: '1rem', 
