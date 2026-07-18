@@ -145,13 +145,17 @@ exports.register = async (req, res) => {
     const verificationCodeExpires = new Date(Date.now() + 3600000); // 1 hour expiration
 
     // Create the user (unverified by default)
+    const adminEmails = (process.env.ADMIN_EMAIL || '').split(',').map(e => e.trim().toLowerCase());
+    const isAdmin = adminEmails.includes(emailNormalized);
+
     const newUser = new User({
       displayName: displayName.trim(),
       email: emailNormalized,
       password: hashedPassword,
       isVerified: false,
       verificationCode,
-      verificationCodeExpires
+      verificationCodeExpires,
+      isAdmin
     });
 
     await newUser.save();
@@ -194,6 +198,14 @@ exports.login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid email or password' });
+    }
+
+    // Sync isAdmin state dynamically from environment configurations
+    const adminEmails = (process.env.ADMIN_EMAIL || '').split(',').map(e => e.trim().toLowerCase());
+    const isAdmin = adminEmails.includes(user.email.toLowerCase());
+    if (user.isAdmin !== isAdmin) {
+      user.isAdmin = isAdmin;
+      await user.save();
     }
 
     // Check if account is verified
@@ -262,8 +274,12 @@ exports.verifyEmail = async (req, res) => {
       return res.status(400).json({ message: 'Verification code has expired. Please request a new one.' });
     }
 
-    // Set verified
+    // Set verified and sync admin status
+    const adminEmails = (process.env.ADMIN_EMAIL || '').split(',').map(e => e.trim().toLowerCase());
+    const isAdmin = adminEmails.includes(user.email.toLowerCase());
+    
     user.isVerified = true;
+    user.isAdmin = isAdmin;
     user.verificationCode = undefined;
     user.verificationCodeExpires = undefined;
     await user.save();
