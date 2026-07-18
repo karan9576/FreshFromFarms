@@ -443,6 +443,39 @@ exports.chatWithAssistant = async (req, res) => {
 
     const lastUserMessage = messages[messages.length - 1].text;
 
+    // Fetch logged-in user's order details from MongoDB
+    let ordersContext = "No orders found for this user.";
+    if (req.user && req.user.email) {
+      const Order = require('../models/Order');
+      const orders = await Order.find({ email: req.user.email }).sort({ createdAt: -1 }).limit(5);
+      if (orders && orders.length > 0) {
+        ordersContext = orders.map((o, idx) => {
+          return `Order #${idx + 1}:
+- ID: ${o._id}
+- Reference ID: ${o.orderId || 'N/A'}
+- Status: ${o.status}
+- Total Amount: ₹${o.totalAmount}
+- Date: ${new Date(o.createdAt).toLocaleDateString()}
+- Items: ${o.items.map(i => `${i.name} (Qty: ${i.quantity})`).join(', ')}`;
+        }).join('\n\n');
+      }
+    }
+
+    const userEmail = req.user ? req.user.email : 'Not Logged In';
+    const dynamicPrompt = `${SYSTEM_PROMPT}
+
+6. Current Logged-In User Information:
+   - Email: ${userEmail}
+   - Login Status: ${req.user ? 'Logged In' : 'Guest (Not Logged In)'}
+   - User's Order History:
+${ordersContext}
+
+Instructions regarding User's Orders:
+- If the user asks "where is my order", "status of my order", or "track my order", and they are logged in, directly reference their order status (e.g. "You have 1 active order #..., status is ...").
+- If the user is NOT logged in and asks about order details, tell them to log in to their profile, or use the "Track Orders" link in the navbar to search for guest orders by entering their email address.
+- Strictly do NOT disclose orders belonging to other emails. Only disclose orders present in the 'User's Order History' block above, which matches their logged-in email.
+`;
+
     // 1. Check if Gemini API key is configured
     if (process.env.GEMINI_API_KEY) {
       const apiKeyClean = process.env.GEMINI_API_KEY.trim().replace(/^['"]|['"]$/g, '');
@@ -462,11 +495,11 @@ exports.chatWithAssistant = async (req, res) => {
           const contents = [
             {
               role: 'user',
-              parts: [{ text: SYSTEM_PROMPT }]
+              parts: [{ text: dynamicPrompt }]
             },
             {
               role: 'model',
-              parts: [{ text: "Understood. I will answer customer queries strictly according to the FreshFromFarms details provided." }]
+              parts: [{ text: "Understood. I will answer customer queries and reference the specific order details of the current logged-in user strictly as instructed." }]
             }
           ];
 
@@ -508,11 +541,9 @@ exports.chatWithAssistant = async (req, res) => {
               }
             } catch (modelErr) {
               console.error(`Error with model ${model}:`, modelErr.message);
-              // If the error was a 404, we continue to the next model in the list
               if (modelErr.message.includes('404')) {
                 continue;
               }
-              // If it is any other error (like 429 rate limit or network error), we throw it to fall back
               throw modelErr;
             }
           }
@@ -545,8 +576,21 @@ exports.chatWithAssistant = async (req, res) => {
       reply = "FreshFromFarms is fully compliant and registered:\n" +
               "• **FSSAI Licence No**: 20426121001137\n" +
               "• **GSTIN**: 10ACJFA8885A1ZL";
-    } else if (query.includes('track') || query.includes('order') || query.includes('status')) {
-      reply = "You can track your orders easily! If you checked out as a guest, simply go to the **Track Orders** page in the navbar and enter your email address to see your order history.";
+    } else if (query.includes('status') || query.includes('track') || query.includes('where is my order') || query.includes('my order')) {
+      if (req.user && req.user.email) {
+        const Order = require('../models/Order');
+        const orders = await Order.find({ email: req.user.email }).sort({ createdAt: -1 }).limit(5);
+        if (orders && orders.length > 0) {
+          const orderLines = orders.map((o, idx) => {
+            return `• **Order Reference ID**: ${o.orderId || o._id} | **Status**: ${o.status} | **Total**: ₹${o.totalAmount} | **Items**: ${o.items.map(i => `${i.name} (x${i.quantity})`).join(', ')}`;
+          }).join('\n');
+          reply = `Here is your recent order history for **${req.user.email}**:\n${orderLines}`;
+        } else {
+          reply = `You are logged in as **${req.user.email}**, but we could not find any order records matching your account email.`;
+        }
+      } else {
+        reply = "To check your order information, please **Log In** to your account. If you checked out as a guest, please use the **Track Orders** page in the navigation bar to search for guest orders by entering your email address.";
+      }
     } else if (query.includes('preservative') || query.includes('organic') || query.includes('natural') || query.includes('bihar')) {
       reply = "All FreshFromFarms foxnuts are harvested from the mineral-rich waters of Bihar, India. They are **100% organic**, water-cultivated, roasted to perfection, and **100% preservative-free** with no added chemicals.";
     } else {
