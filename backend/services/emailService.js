@@ -358,7 +358,7 @@ exports.sendNewsletterSignupEmail = async (userEmail) => {
   sendMailHelper(mailOptions);
 };
 
-exports.sendContactFormEmail = async (name, email, message) => {
+exports.sendContactFormEmail = async (name, email, phone, message) => {
   const mailOptions = {
     to: 'care.freshfromfarms@gmail.com',
     subject: `New Contact Form Query from ${name} 🔑`,
@@ -381,6 +381,10 @@ exports.sendContactFormEmail = async (name, email, message) => {
               <tr>
                 <td style="padding: 6px 0; color: #7f8c8d; font-size: 14px;">Customer Email:</td>
                 <td style="padding: 6px 0; color: #cf5c36; font-weight: 600; font-size: 14px;">${email}</td>
+              </tr>
+              <tr>
+                <td style="padding: 6px 0; color: #7f8c8d; font-size: 14px;">Customer Phone:</td>
+                <td style="padding: 6px 0; color: #2c3e50; font-weight: 600; font-size: 14px;">${phone}</td>
               </tr>
               <tr>
                 <td style="padding: 6px 0; color: #7f8c8d; font-size: 14px;">Received Date:</td>

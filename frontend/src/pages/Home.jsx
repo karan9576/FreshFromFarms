@@ -206,6 +206,7 @@ export default function Home({ addToCart, cart = [], updateQuantity }) {
 
   const [contactName, setContactName] = useState('');
   const [contactEmail, setContactEmail] = useState('');
+  const [contactPhone, setContactPhone] = useState('');
   const [contactMessage, setContactMessage] = useState('');
   const [contactLoading, setContactLoading] = useState(false);
 
@@ -219,11 +220,13 @@ export default function Home({ addToCart, cart = [], updateQuantity }) {
       const res = await axios.post(`${cleanApiURL}/auth/contact`, {
         name: contactName,
         email: contactEmail,
+        phone: contactPhone,
         message: contactMessage
       });
       alert(res.data.message || 'Thank you! Your message has been sent successfully. We will get back to you shortly.');
       setContactName('');
       setContactEmail('');
+      setContactPhone('');
       setContactMessage('');
     } catch (err) {
       alert(err.response?.data?.message || 'Failed to send message. Please try again.');
@@ -586,6 +589,17 @@ export default function Home({ addToCart, cart = [], updateQuantity }) {
                   value={contactEmail}
                   onChange={(e) => setContactEmail(e.target.value)}
                   required 
+                  disabled={contactLoading}
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="contact-phone">Phone Number / Mobile (for Call Back)</label>
+                <input 
+                  type="tel" 
+                  id="contact-phone" 
+                  placeholder="Enter phone number (e.g. +91 99999 99999)" 
+                  value={contactPhone}
+                  onChange={(e) => setContactPhone(e.target.value)}
                   disabled={contactLoading}
                 />
               </div>

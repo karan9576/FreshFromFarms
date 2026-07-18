@@ -380,16 +380,16 @@ exports.subscribeNewsletter = async (req, res) => {
 
 exports.submitContactForm = async (req, res) => {
   try {
-    const { name, email, message } = req.body;
+    const { name, email, phone, message } = req.body;
 
     if (!name || !email || !message) {
-      return res.status(400).json({ message: 'All fields (name, email, message) are required' });
+      return res.status(400).json({ message: 'Name, email, and message are required' });
     }
 
     const emailNormalized = email.toLowerCase().trim();
 
     // Trigger customer inquiry email notification to care.freshfromfarms@gmail.com
-    await emailService.sendContactFormEmail(name.trim(), emailNormalized, message.trim());
+    await emailService.sendContactFormEmail(name.trim(), emailNormalized, phone ? phone.trim() : 'N/A', message.trim());
 
     res.json({ message: 'Thank you! Your message has been sent successfully. We will get back to you shortly.' });
   } catch (error) {
