@@ -68,19 +68,39 @@ app.use(async (req, res, next) => {
   next();
 });
 
+// Throttling unique IP visits within a 1-hour window to keep hits accurate
+const recentVisitors = new Map();
+
+// Clean up old entries periodically
+setInterval(() => {
+  const now = Date.now();
+  for (const [ip, time] of recentVisitors.entries()) {
+    if (now - time > 1000 * 60 * 60) {
+      recentVisitors.delete(ip);
+    }
+  }
+}, 1000 * 60 * 15);
+
 // Stat tracking middleware (Visits)
 app.use(async (req, res, next) => {
   // Only track API visits to avoid counting static asset requests if any
   if (req.path.startsWith('/api') && !req.path.startsWith('/api/admin')) {
-    try {
-      const today = new Date().toISOString().split('T')[0];
-      await Stat.findOneAndUpdate(
-        { date: today },
-        { $inc: { visits: 1 } },
-        { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
-      );
-    } catch (error) {
-      console.error('Stat tracking error:', error);
+    const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || req.ip;
+    const now = Date.now();
+    const lastVisit = recentVisitors.get(clientIp);
+
+    if (!lastVisit || (now - lastVisit > 1000 * 60 * 60)) {
+      recentVisitors.set(clientIp, now);
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        await Stat.findOneAndUpdate(
+          { date: today },
+          { $inc: { visits: 1 } },
+          { upsert: true, returnDocument: 'after', setDefaultsOnInsert: true }
+        );
+      } catch (error) {
+        console.error('Stat tracking error:', error);
+      }
     }
   }
   next();
