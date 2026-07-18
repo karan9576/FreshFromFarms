@@ -112,6 +112,27 @@ exports.register = async (req, res) => {
     // Check if user already exists
     const existingUser = await User.findOne({ email: emailNormalized });
     if (existingUser) {
+      // If user exists but is not verified, allow them to overwrite registration with new code
+      if (!existingUser.isVerified) {
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+        
+        existingUser.displayName = displayName.trim();
+        existingUser.password = hashedPassword;
+        
+        const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+        existingUser.verificationCode = verificationCode;
+        existingUser.verificationCodeExpires = new Date(Date.now() + 3600000);
+        
+        await existingUser.save();
+        await emailService.sendVerificationEmail(existingUser.email, existingUser.displayName, verificationCode);
+        
+        return res.status(201).json({
+          message: 'Verification code resent to your email. Please verify to complete registration.',
+          email: existingUser.email,
+          requiresVerification: true
+        });
+      }
       return res.status(400).json({ message: 'A user with this email address already exists' });
     }
 
@@ -119,35 +140,29 @@ exports.register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create the user
+    // Generate verification code
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const verificationCodeExpires = new Date(Date.now() + 3600000); // 1 hour expiration
+
+    // Create the user (unverified by default)
     const newUser = new User({
       displayName: displayName.trim(),
       email: emailNormalized,
-      password: hashedPassword
+      password: hashedPassword,
+      isVerified: false,
+      verificationCode,
+      verificationCodeExpires
     });
 
     await newUser.save();
 
-    // Trigger welcome signup email asynchronously
-    emailService.sendSignupEmail(newUser.email, newUser.displayName).catch(err => {
-      console.error('Welcome email trigger failed:', err.message);
-    });
-
-    // Sign JWT
-    const token = jwt.sign(
-      { id: newUser._id, isAdmin: newUser.isAdmin },
-      process.env.JWT_SECRET || 'freshfromfarmssecret_key_2026',
-      { expiresIn: '30d' }
-    );
+    // Send verification email
+    await emailService.sendVerificationEmail(newUser.email, newUser.displayName, verificationCode);
 
     res.status(201).json({
-      token,
-      user: {
-        _id: newUser._id,
-        displayName: newUser.displayName,
-        email: newUser.email,
-        isAdmin: newUser.isAdmin
-      }
+      message: 'Verification code sent to your email. Please verify to complete registration.',
+      email: newUser.email,
+      requiresVerification: true
     });
   } catch (error) {
     console.error('Registration error:', error);
@@ -181,6 +196,22 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
 
+    // Check if account is verified
+    if (!user.isVerified) {
+      const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+      user.verificationCode = verificationCode;
+      user.verificationCodeExpires = new Date(Date.now() + 3600000);
+      await user.save();
+
+      await emailService.sendVerificationEmail(user.email, user.displayName, verificationCode);
+
+      return res.status(403).json({
+        message: 'Your email address is not verified. A new code has been sent to your inbox.',
+        email: user.email,
+        requiresVerification: true
+      });
+    }
+
     // Sign JWT
     const token = jwt.sign(
       { id: user._id, isAdmin: user.isAdmin },
@@ -201,5 +232,112 @@ exports.login = async (req, res) => {
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ message: 'Error logging in. Please try again.' });
+  }
+};
+
+exports.verifyEmail = async (req, res) => {
+  try {
+    const { email, code } = req.body;
+
+    if (!email || !code) {
+      return res.status(400).json({ message: 'Email and verification code are required' });
+    }
+
+    const emailNormalized = email.toLowerCase().trim();
+    const user = await User.findOne({ email: emailNormalized });
+
+    if (!user) {
+      return res.status(400).json({ message: 'User not found' });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({ message: 'This account is already verified. Please log in.' });
+    }
+
+    if (!user.verificationCode || user.verificationCode !== code.trim()) {
+      return res.status(400).json({ message: 'Invalid verification code' });
+    }
+
+    if (user.verificationCodeExpires < new Date()) {
+      return res.status(400).json({ message: 'Verification code has expired. Please request a new one.' });
+    }
+
+    // Set verified
+    user.isVerified = true;
+    user.verificationCode = undefined;
+    user.verificationCodeExpires = undefined;
+    await user.save();
+
+    // Trigger welcome signup email asynchronously
+    emailService.sendSignupEmail(user.email, user.displayName).catch(err => {
+      console.error('Welcome email trigger failed:', err.message);
+    });
+
+    // Track signup stat
+    try {
+      const Stat = require('../models/Stat');
+      const today = new Date().toISOString().split('T')[0];
+      await Stat.findOneAndUpdate(
+        { date: today },
+        { $inc: { signups: 1 } },
+        { upsert: true, new: true, setDefaultsOnInsert: true }
+      );
+    } catch (statErr) {
+      console.error('Stat update failed:', statErr.message);
+    }
+
+    // Generate JWT
+    const token = jwt.sign(
+      { id: user._id, isAdmin: user.isAdmin },
+      process.env.JWT_SECRET || 'freshfromfarmssecret_key_2026',
+      { expiresIn: '30d' }
+    );
+
+    res.json({
+      token,
+      user: {
+        _id: user._id,
+        displayName: user.displayName,
+        email: user.email,
+        isAdmin: user.isAdmin
+      }
+    });
+  } catch (error) {
+    console.error('Verification error:', error);
+    res.status(500).json({ message: 'Error verifying code. Please try again.' });
+  }
+};
+
+exports.resendVerificationCode = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: 'Email address is required' });
+    }
+
+    const emailNormalized = email.toLowerCase().trim();
+    const user = await User.findOne({ email: emailNormalized });
+
+    if (!user) {
+      return res.status(400).json({ message: 'User not found' });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({ message: 'This account is already verified' });
+    }
+
+    // Generate new code
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    user.verificationCode = verificationCode;
+    user.verificationCodeExpires = new Date(Date.now() + 3600000);
+    await user.save();
+
+    await emailService.sendVerificationEmail(user.email, user.displayName, verificationCode);
+
+    res.json({ message: 'A new verification code has been sent to your email.' });
+  } catch (error) {
+    console.error('Resend error:', error);
+    res.status(500).json({ message: 'Error resending verification code. Please try again.' });
   }
 };

@@ -14,6 +14,8 @@ router.get('/current_user', authController.getCurrentUser);
 router.get('/my-orders', isAuthenticated, authController.getMyOrders);
 router.post('/register', authController.register);
 router.post('/login', authController.login);
+router.post('/verify-email', authController.verifyEmail);
+router.post('/resend-code', authController.resendVerificationCode);
 router.post('/track-guest-order', authController.trackGuestOrder);
 
 module.exports = router;

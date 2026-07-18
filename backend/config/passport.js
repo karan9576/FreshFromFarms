@@ -32,6 +32,7 @@ module.exports = function (passport) {
               email: profile.emails[0].value,
               picture: profile.photos[0].value,
               isAdmin,
+              isVerified: true,
             };
             user = await User.create(newUser);
 
