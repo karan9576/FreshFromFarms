@@ -469,8 +469,20 @@ exports.chatWithAssistant = async (req, res) => {
           });
         });
 
-        const geminiRes = await axios.post(geminiUrl, { contents });
-        const replyText = geminiRes.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        const geminiRes = await fetch(geminiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ contents })
+        });
+
+        if (!geminiRes.ok) {
+          throw new Error(`Request failed with status code ${geminiRes.status}`);
+        }
+
+        const geminiData = await geminiRes.json();
+        const replyText = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text;
 
         if (replyText) {
           return res.json({ text: replyText.trim() });
