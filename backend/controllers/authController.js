@@ -571,9 +571,9 @@ Instructions regarding User's Orders:
       reply = "We offer **Free Shipping** on all orders above **₹499**. For orders below ₹499, delivery charges will be calculated during checkout.";
     } else if (query.includes('contact') || query.includes('phone') || query.includes('whatsapp') || query.includes('call') || query.includes('email')) {
       reply = "You can reach our support team here:\n" +
-              "• 📞 **Phone/WhatsApp**: +91 9870415174 / +91 9576600246\n" +
-              "• ✉️ **Email**: care.freshfromfarms@gmail.com\n" +
-              "• ⚡ **Callback SLA**: Submit our contact form and we will call you back within **1 hour**!";
+              "• **Phone/WhatsApp**: +91 9870415174 / +91 9576600246\n" +
+              "• **Email**: care.freshfromfarms@gmail.com\n" +
+              "• **Callback SLA**: Submit our contact form and we will call you back within **1 hour**!";
     } else if (query.includes('fssai') || query.includes('gst') || query.includes('licence') || query.includes('compliance')) {
       reply = "FreshFromFarms is fully compliant and registered:\n" +
               "• **FSSAI Licence No**: 20426121001137\n" +
