@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const Order = require('../models/Order');
+const emailService = require('../services/emailService');
 
 exports.googleLogin = passport.authenticate('google', { scope: ['profile', 'email'] });
 
@@ -126,6 +127,11 @@ exports.register = async (req, res) => {
     });
 
     await newUser.save();
+
+    // Trigger welcome signup email asynchronously
+    emailService.sendSignupEmail(newUser.email, newUser.displayName).catch(err => {
+      console.error('Welcome email trigger failed:', err.message);
+    });
 
     // Sign JWT
     const token = jwt.sign(
