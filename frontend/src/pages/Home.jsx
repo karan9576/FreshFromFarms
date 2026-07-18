@@ -499,8 +499,14 @@ export default function Home({ addToCart, cart = [], updateQuantity }) {
                 <span className="contact-icon">🛡️</span>
                 <div>
                   <h4>Compliance & Registrations</h4>
-                  <p><strong>FSSAI Licence No:</strong> 20426121001137</p>
-                  <p><strong>GST Registration No:</strong> 10ACJFA8885A1ZL</p>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginTop: '0.4rem', marginBottom: '0.6rem' }}>
+                    <img src="/fssai.png" alt="FSSAI Logo" style={{ height: '24px', width: 'auto', objectFit: 'contain' }} />
+                    <span style={{ fontSize: '0.95rem', color: 'var(--text-dark)' }}><strong>FSSAI Licence No:</strong> 20426121001137</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                    <img src="/gst.png" alt="GST Logo" style={{ height: '20px', width: 'auto', objectFit: 'contain' }} />
+                    <span style={{ fontSize: '0.95rem', color: 'var(--text-dark)' }}><strong>GST Registration No:</strong> 10ACJFA8885A1ZL</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -547,8 +553,14 @@ export default function Home({ addToCart, cart = [], updateQuantity }) {
             <p style={{ fontSize: '0.9rem', marginBottom: '0.4rem', color: 'rgba(255,255,255,0.7)' }}>📞 +91 9870415174</p>
             <p style={{ fontSize: '0.9rem', marginBottom: '0.4rem', color: 'rgba(255,255,255,0.7)' }}>📞 +91 9576600246</p>
             <p style={{ fontSize: '0.9rem', marginBottom: '1.2rem', color: 'rgba(255,255,255,0.7)' }}>✉️ support@freshfromfarms.com</p>
-            <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.4)', margin: '0.2rem 0' }}><strong>GSTIN:</strong> 10ACJFA8885A1ZL</p>
-            <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.4)', margin: '0.2rem 0' }}><strong>FSSAI:</strong> 20426121001137</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '0.4rem 0' }}>
+              <img src="/fssai.png" alt="FSSAI Logo" style={{ height: '18px', background: '#ffffff', padding: '2px', borderRadius: '3px', objectFit: 'contain' }} />
+              <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.5)' }}><strong>FSSAI:</strong> 20426121001137</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '0.4rem 0' }}>
+              <img src="/gst.png" alt="GST Logo" style={{ height: '16px', background: '#ffffff', padding: '2px', borderRadius: '3px', objectFit: 'contain' }} />
+              <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.5)' }}><strong>GSTIN:</strong> 10ACJFA8885A1ZL</span>
+            </div>
           </div>
           <div className="footer-col">
             <h3>Join the Fresh Farm</h3>
