@@ -549,7 +549,7 @@ export default function Home({ addToCart, cart = [], updateQuantity }) {
                 <span className="contact-icon">✉️</span>
                 <div>
                   <h4>Email Support</h4>
-                  <p><a href="mailto:support@freshfromfarms.com">support@freshfromfarms.com</a></p>
+                  <p><a href="mailto:care.freshfromfarms@gmail.com">care.freshfromfarms@gmail.com</a></p>
                 </div>
               </div>
 
@@ -650,7 +650,7 @@ export default function Home({ addToCart, cart = [], updateQuantity }) {
             <h3>Contact & Compliance</h3>
             <p style={{ fontSize: '0.9rem', marginBottom: '0.4rem', color: 'rgba(255,255,255,0.7)' }}>📞 +91 9870415174</p>
             <p style={{ fontSize: '0.9rem', marginBottom: '0.4rem', color: 'rgba(255,255,255,0.7)' }}>📞 +91 9576600246</p>
-            <p style={{ fontSize: '0.9rem', marginBottom: '1.2rem', color: 'rgba(255,255,255,0.7)' }}>✉️ support@freshfromfarms.com</p>
+            <p style={{ fontSize: '0.9rem', marginBottom: '1.2rem', color: 'rgba(255,255,255,0.7)' }}>✉️ care.freshfromfarms@gmail.com</p>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '0.4rem 0' }}>
               <img src="/fssai.png" alt="FSSAI Logo" style={{ height: '22px', objectFit: 'contain' }} />
               <span style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.5)' }}><strong>FSSAI:</strong> 20426121001137</span>

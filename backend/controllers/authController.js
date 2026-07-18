@@ -418,7 +418,7 @@ Respond politely, concisely, and helpfully based on the following verified infor
 4. Contact & Compliance Info:
    - FSSAI License Number: 20426121001137
    - GSTIN (GST Registration): 10ACJFA8885A1ZL
-   - Support Email: support@freshfromfarms.com (Inquiry mails also route to care.freshfromfarms@gmail.com)
+   - Support Email: care.freshfromfarms@gmail.com
    - Contact/WhatsApp Support: +91 9870415174 and +91 9576600246
    - Call Back SLA: We guarantee to respond to callback requests within 1 hour!
 
@@ -430,7 +430,7 @@ Respond politely, concisely, and helpfully based on the following verified infor
 Guidelines:
 - Keep answers under 3-4 sentences when possible.
 - **Strict Grounding Rule**: You must ONLY answer questions using the verified facts provided above. Do not hallucinate, speculate, or use external knowledge to make assumptions about FreshFromFarms products, stock availability, shipping policies, returns, or operations.
-- If the customer asks about something NOT explicitly detailed in the verified facts (e.g. customized bulk deals, refund timeframes, product details not listed), you MUST respond exactly: *"I apologize, but I do not have verified information regarding that query. Please submit a request on our Contact form or reach out to our team at support@freshfromfarms.com, and we will call you back within 1 hour."*
+- If the customer asks about something NOT explicitly detailed in the verified facts (e.g. customized bulk deals, refund timeframes, product details not listed), you MUST respond exactly: *"I apologize, but I do not have verified information regarding that query. Please submit a request on our Contact form or reach out to our team at care.freshfromfarms@gmail.com, and we will call you back within 1 hour."*
 - If a user asks about something unrelated to the brand, gently redirect them back to FreshFromFarms.
 - Use formatting (bullet points, bold text) to make your answers easy to scan.
 `;
@@ -572,7 +572,7 @@ Instructions regarding User's Orders:
     } else if (query.includes('contact') || query.includes('phone') || query.includes('whatsapp') || query.includes('call') || query.includes('email')) {
       reply = "You can reach our support team here:\n" +
               "• 📞 **Phone/WhatsApp**: +91 9870415174 / +91 9576600246\n" +
-              "• ✉️ **Email**: support@freshfromfarms.com\n" +
+              "• ✉️ **Email**: care.freshfromfarms@gmail.com\n" +
               "• ⚡ **Callback SLA**: Submit our contact form and we will call you back within **1 hour**!";
     } else if (query.includes('fssai') || query.includes('gst') || query.includes('licence') || query.includes('compliance')) {
       reply = "FreshFromFarms is fully compliant and registered:\n" +
