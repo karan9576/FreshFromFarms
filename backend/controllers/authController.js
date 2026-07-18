@@ -397,3 +397,123 @@ exports.submitContactForm = async (req, res) => {
     res.status(500).json({ message: 'Error sending your message. Please try again.' });
   }
 };
+
+const SYSTEM_PROMPT = `
+You are the official AI Customer Support Assistant for "FreshFromFarms", a premium brand selling high-quality organic Makhana (Indian Foxnuts / Water Lily Seeds).
+Respond politely, concisely, and helpfully based on the following verified information about FreshFromFarms:
+
+1. Brand Overview:
+   - "FreshFromFarms" sources premium, water-cultivated organic Makhana directly from the mineral-rich waters of Bihar, India.
+   - It is a GI-tagged superfood, 100% natural, roasted to perfection, and 100% preservative-free (0% added additives).
+
+2. Products and Collection:
+   - Raw Makhana: Natural, unprocessed organic fox nuts. (Prices: 50g = ₹79, 100g = ₹139, 1kg = ₹899)
+   - Salted Makhana: Lightly roasted with trace rock salt. (Prices: 50g = ₹89, 100g = ₹159, 1kg = ₹999)
+   - Flavoured Makhana (Peri Peri, Mint, Cheese): Gourmet roasted fox nuts. (Prices: 50g = ₹99, 100g = ₹179, 1kg = ₹1099)
+
+3. Promotional Offers:
+   - Shipping: Free delivery on all orders above ₹499. For orders under ₹499, shipping charges apply.
+   - First Order Discount: Use coupon code "FRESHSTART10" during checkout to get 10% OFF your first order.
+
+4. Contact & Compliance Info:
+   - FSSAI License Number: 20426121001137
+   - GSTIN (GST Registration): 10ACJFA8885A1ZL
+   - Support Email: support@freshfromfarms.com (Inquiry mails also route to care.freshfromfarms@gmail.com)
+   - Contact/WhatsApp Support: +91 9870415174 and +91 9576600246
+   - Call Back SLA: We guarantee to respond to callback requests within 1 hour!
+
+5. Checkout & Tracking:
+   - Registered users can track orders in their customer dashboard.
+   - Guest users can track orders on the "Track Orders" page by entering their email address.
+   - Payment is securely handled online via Razorpay.
+
+Guidelines:
+- Keep answers under 3-4 sentences when possible.
+- If a user asks about something unrelated to the brand, gently redirect them back to FreshFromFarms.
+- Use formatting (bullet points, bold text) to make your answers easy to scan.
+`;
+
+exports.chatWithAssistant = async (req, res) => {
+  try {
+    const { messages } = req.body;
+
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+      return res.status(400).json({ message: 'Conversation history (messages) is required' });
+    }
+
+    const lastUserMessage = messages[messages.length - 1].text;
+
+    // 1. Check if Gemini API key is configured
+    if (process.env.GEMINI_API_KEY) {
+      try {
+        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`;
+        
+        // Map messages format: user -> user, assistant -> model
+        const contents = [
+          {
+            role: 'user',
+            parts: [{ text: SYSTEM_PROMPT }]
+          },
+          {
+            role: 'model',
+            parts: [{ text: "Understood. I will answer customer queries strictly according to the FreshFromFarms details provided." }]
+          }
+        ];
+
+        // Append historical messages (limit to last 6 messages to save context limits)
+        const activeHistory = messages.slice(-6);
+        activeHistory.forEach(msg => {
+          contents.push({
+            role: msg.sender === 'user' ? 'user' : 'model',
+            parts: [{ text: msg.text }]
+          });
+        });
+
+        const geminiRes = await axios.post(geminiUrl, { contents });
+        const replyText = geminiRes.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (replyText) {
+          return res.json({ text: replyText.trim() });
+        }
+      } catch (geminiErr) {
+        console.error('Gemini API call failed, falling back to local search:', geminiErr.message);
+      }
+    }
+
+    // 2. Local smart keyword fallback engine
+    const query = lastUserMessage.toLowerCase();
+    let reply = "";
+
+    if (query.includes('price') || query.includes('cost') || query.includes('rate') || query.includes('collect')) {
+      reply = "Our Makhana collection includes:\n" +
+              "• **Raw Makhana**: ₹79 (50g) | ₹139 (100g) | ₹899 (1kg)\n" +
+              "• **Salted Makhana**: ₹89 (50g) | ₹159 (100g) | ₹999 (1kg)\n" +
+              "• **Flavoured Makhana** (Peri Peri, Mint, Cheese): ₹99 (50g) | ₹179 (100g) | ₹1099 (1kg).\n" +
+              "All our foxnuts are water-cultivated and preservative-free!";
+    } else if (query.includes('coupon') || query.includes('discount') || query.includes('offer') || query.includes('promo')) {
+      reply = "Yes! You can get **10% OFF** your first order by applying the coupon code **FRESHSTART10** during checkout. We also offer free delivery on orders above ₹499!";
+    } else if (query.includes('shipping') || query.includes('delivery') || query.includes('charge')) {
+      reply = "We offer **Free Shipping** on all orders above **₹499**. For orders below ₹499, delivery charges will be calculated during checkout.";
+    } else if (query.includes('contact') || query.includes('phone') || query.includes('whatsapp') || query.includes('call') || query.includes('email')) {
+      reply = "You can reach our support team here:\n" +
+              "• 📞 **Phone/WhatsApp**: +91 9870415174 / +91 9576600246\n" +
+              "• ✉️ **Email**: support@freshfromfarms.com\n" +
+              "• ⚡ **Callback SLA**: Submit our contact form and we will call you back within **1 hour**!";
+    } else if (query.includes('fssai') || query.includes('gst') || query.includes('licence') || query.includes('compliance')) {
+      reply = "FreshFromFarms is fully compliant and registered:\n" +
+              "• **FSSAI Licence No**: 20426121001137\n" +
+              "• **GSTIN**: 10ACJFA8885A1ZL";
+    } else if (query.includes('track') || query.includes('order') || query.includes('status')) {
+      reply = "You can track your orders easily! If you checked out as a guest, simply go to the **Track Orders** page in the navbar and enter your email address to see your order history.";
+    } else if (query.includes('preservative') || query.includes('organic') || query.includes('natural') || query.includes('bihar')) {
+      reply = "All FreshFromFarms foxnuts are harvested from the mineral-rich waters of Bihar, India. They are **100% organic**, water-cultivated, roasted to perfection, and **100% preservative-free** with no added chemicals.";
+    } else {
+      reply = "Hello! I am your Fresh Farm Assistant. I can help you with questions about our organic Makhana prices, delivery fees, order tracking, compliance, and custom bulk inquiries. Ask me anything!";
+    }
+
+    res.json({ text: reply });
+  } catch (error) {
+    console.error('Chatbot handler error:', error);
+    res.status(500).json({ message: 'Error processing chat assistant request' });
+  }
+};

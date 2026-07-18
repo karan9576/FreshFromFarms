@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import AnnouncementBar from './components/AnnouncementBar';
+import Chatbot from './components/Chatbot';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import LoginSuccess from './pages/LoginSuccess';
@@ -433,6 +434,8 @@ function App() {
           </div>
         </div>
       )}
+
+      <Chatbot />
     </>
   );
 }
