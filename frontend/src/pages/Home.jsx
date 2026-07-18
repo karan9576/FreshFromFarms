@@ -376,6 +376,11 @@ export default function Home({ addToCart, cart = [], updateQuantity }) {
               <span className="feat-val">Water Grown</span>
               <span className="feat-lbl">Traditional Farming</span>
             </div>
+            <div className="feat-divider"></div>
+            <div className="feat-item">
+              <span className="feat-val">No Preservatives</span>
+              <span className="feat-lbl">0% Added Additives</span>
+            </div>
           </div>
         </div>
 
