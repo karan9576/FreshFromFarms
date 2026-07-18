@@ -105,8 +105,13 @@ export default function Chatbot() {
             <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
           </svg>
         ) : (
-          <svg style={{ width: '24px', height: '24px', fill: '#fff' }} viewBox="0 0 24 24">
-            <path d="M12 2C6.48 2 2 6.48 2 12v5c0 1.66 1.34 3 3 3h3v-8H4v-2c0-4.41 3.59-8 8-8s8 3.59 8 8v2h-4v8h4c1.66 0 3-1.34 3-3v-5c0-5.52-4.48-10-10-10z"/>
+          <svg style={{ width: '25px', height: '25px', fill: 'none', stroke: '#fff', strokeWidth: '2.2', strokeLinecap: 'round', strokeLinejoin: 'round' }} viewBox="0 0 24 24">
+            <path d="M12 8V4H8" />
+            <rect width="16" height="12" x="4" y="8" rx="2" />
+            <path d="M2 14h2" />
+            <path d="M20 14h2" />
+            <path d="M15 13v2" />
+            <path d="M9 13v2" />
           </svg>
         )}
       </button>
