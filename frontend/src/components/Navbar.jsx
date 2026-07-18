@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { ShoppingBag, Menu, X, ChevronDown, LogOut, Shield, ClipboardList, User } from 'lucide-react';
+import { ShoppingBag, Menu, X, ChevronDown, LogOut, Shield, ClipboardList, User, LogIn } from 'lucide-react';
 
 export default function Navbar({ cartCount, onCartClick, user, setUser }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -144,7 +144,10 @@ export default function Navbar({ cartCount, onCartClick, user, setUser }) {
           </>
         ) : (
           <li>
-            <Link to="/login" className="login-btn-pill">Login</Link>
+            <Link to="/login" className="login-btn-pill" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+              <LogIn size={15} />
+              <span>Login</span>
+            </Link>
           </li>
         )}
 
