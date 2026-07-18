@@ -258,7 +258,7 @@ function App() {
       
       <Routes>
         <Route path="/" element={<Home addToCart={addToCart} cart={cart} updateQuantity={updateQuantity} />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<Login setUser={setUser} />} />
         <Route path="/login-success" element={<LoginSuccess setUser={setUser} />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/my-orders" element={<MyOrders />} />

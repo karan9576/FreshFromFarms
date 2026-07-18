@@ -1,6 +1,8 @@
 const passport = require('passport');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+const User = require('../models/User');
 const Order = require('../models/Order');
 
 exports.googleLogin = passport.authenticate('google', { scope: ['profile', 'email'] });
@@ -89,5 +91,109 @@ exports.trackGuestOrder = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error tracking orders' });
+  }
+};
+
+exports.register = async (req, res) => {
+  try {
+    const { displayName, email, password } = req.body;
+
+    if (!displayName || !email || !password) {
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ message: 'Password must be at least 6 characters long' });
+    }
+
+    const emailNormalized = email.toLowerCase().trim();
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email: emailNormalized });
+    if (existingUser) {
+      return res.status(400).json({ message: 'A user with this email address already exists' });
+    }
+
+    // Hash the password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Create the user
+    const newUser = new User({
+      displayName: displayName.trim(),
+      email: emailNormalized,
+      password: hashedPassword
+    });
+
+    await newUser.save();
+
+    // Sign JWT
+    const token = jwt.sign(
+      { id: newUser._id, isAdmin: newUser.isAdmin },
+      process.env.JWT_SECRET || 'freshfromfarmssecret_key_2026',
+      { expiresIn: '30d' }
+    );
+
+    res.status(201).json({
+      token,
+      user: {
+        _id: newUser._id,
+        displayName: newUser.displayName,
+        email: newUser.email,
+        isAdmin: newUser.isAdmin
+      }
+    });
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({ message: 'Error registering new user. Please try again.' });
+  }
+};
+
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Email and password are required' });
+    }
+
+    const emailNormalized = email.toLowerCase().trim();
+
+    const user = await User.findOne({ email: emailNormalized });
+    if (!user) {
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+
+    // Check if it is a Google-only account (no password set)
+    if (!user.password) {
+      return res.status(400).json({ message: 'This account is set up with Google Login. Please sign in with Google.' });
+    }
+
+    // Compare passwords
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Invalid email or password' });
+    }
+
+    // Sign JWT
+    const token = jwt.sign(
+      { id: user._id, isAdmin: user.isAdmin },
+      process.env.JWT_SECRET || 'freshfromfarmssecret_key_2026',
+      { expiresIn: '30d' }
+    );
+
+    res.json({
+      token,
+      user: {
+        _id: user._id,
+        displayName: user.displayName,
+        email: user.email,
+        picture: user.picture,
+        isAdmin: user.isAdmin
+      }
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ message: 'Error logging in. Please try again.' });
   }
 };
