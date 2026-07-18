@@ -204,6 +204,34 @@ export default function Home({ addToCart, cart = [], updateQuantity }) {
     }
   };
 
+  const [contactName, setContactName] = useState('');
+  const [contactEmail, setContactEmail] = useState('');
+  const [contactMessage, setContactMessage] = useState('');
+  const [contactLoading, setContactLoading] = useState(false);
+
+  const handleContactSubmit = async (e) => {
+    e.preventDefault();
+    if (!contactName || !contactEmail || !contactMessage) return;
+    setContactLoading(true);
+    try {
+      const apiURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      const cleanApiURL = apiURL.endsWith('/') ? apiURL.slice(0, -1) : apiURL;
+      const res = await axios.post(`${cleanApiURL}/auth/contact`, {
+        name: contactName,
+        email: contactEmail,
+        message: contactMessage
+      });
+      alert(res.data.message || 'Thank you! Your message has been sent successfully. We will get back to you shortly.');
+      setContactName('');
+      setContactEmail('');
+      setContactMessage('');
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to send message. Please try again.');
+    } finally {
+      setContactLoading(false);
+    }
+  };
+
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [transparentImages, setTransparentImages] = useState({
     raw: '',
@@ -536,20 +564,46 @@ export default function Home({ addToCart, cart = [], updateQuantity }) {
 
           <div className="contact-form-panel glass-panel">
             <h3>Send a Message</h3>
-            <form onSubmit={(e) => { e.preventDefault(); alert('Thank you! Your message has been received. We will get back to you shortly.'); e.target.reset(); }}>
+            <form onSubmit={handleContactSubmit}>
               <div className="form-group">
                 <label htmlFor="contact-name">Full Name</label>
-                <input type="text" id="contact-name" placeholder="Enter your name" required />
+                <input 
+                  type="text" 
+                  id="contact-name" 
+                  placeholder="Enter your name" 
+                  value={contactName}
+                  onChange={(e) => setContactName(e.target.value)}
+                  required 
+                  disabled={contactLoading}
+                />
               </div>
               <div className="form-group">
                 <label htmlFor="contact-email">Email Address</label>
-                <input type="email" id="contact-email" placeholder="Enter your email" required />
+                <input 
+                  type="email" 
+                  id="contact-email" 
+                  placeholder="Enter your email" 
+                  value={contactEmail}
+                  onChange={(e) => setContactEmail(e.target.value)}
+                  required 
+                  disabled={contactLoading}
+                />
               </div>
               <div className="form-group">
                 <label htmlFor="contact-message">Your Message</label>
-                <textarea id="contact-message" rows="4" placeholder="How can we help you?" required></textarea>
+                <textarea 
+                  id="contact-message" 
+                  rows="4" 
+                  placeholder="How can we help you?" 
+                  value={contactMessage}
+                  onChange={(e) => setContactMessage(e.target.value)}
+                  required
+                  disabled={contactLoading}
+                ></textarea>
               </div>
-              <button type="submit" className="btn-primary" style={{ width: '100%' }}>Send Message</button>
+              <button type="submit" className="btn-primary" style={{ width: '100%' }} disabled={contactLoading}>
+                {contactLoading ? 'Sending...' : 'Send Message'}
+              </button>
             </form>
           </div>
         </div>

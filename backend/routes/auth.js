@@ -17,6 +17,7 @@ router.post('/login', authController.login);
 router.post('/verify-email', authController.verifyEmail);
 router.post('/resend-code', authController.resendVerificationCode);
 router.post('/newsletter', authController.subscribeNewsletter);
+router.post('/contact', authController.submitContactForm);
 router.post('/track-guest-order', authController.trackGuestOrder);
 
 module.exports = router;

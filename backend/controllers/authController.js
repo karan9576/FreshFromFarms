@@ -377,3 +377,23 @@ exports.subscribeNewsletter = async (req, res) => {
     res.status(500).json({ message: 'Error processing subscription. Please try again.' });
   }
 };
+
+exports.submitContactForm = async (req, res) => {
+  try {
+    const { name, email, message } = req.body;
+
+    if (!name || !email || !message) {
+      return res.status(400).json({ message: 'All fields (name, email, message) are required' });
+    }
+
+    const emailNormalized = email.toLowerCase().trim();
+
+    // Trigger customer inquiry email notification to care.freshfromfarms@gmail.com
+    await emailService.sendContactFormEmail(name.trim(), emailNormalized, message.trim());
+
+    res.json({ message: 'Thank you! Your message has been sent successfully. We will get back to you shortly.' });
+  } catch (error) {
+    console.error('Contact form submission error:', error);
+    res.status(500).json({ message: 'Error sending your message. Please try again.' });
+  }
+};
