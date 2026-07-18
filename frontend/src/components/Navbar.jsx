@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ShoppingBag, Menu, X, ChevronDown, LogOut, Shield, ClipboardList, User, LogIn } from 'lucide-react';
 
-export default function Navbar({ cartCount, onCartClick, user, setUser }) {
+export default function Navbar({ cartCount, onCartClick, user, setUser, authLoading }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -74,7 +74,11 @@ export default function Navbar({ cartCount, onCartClick, user, setUser }) {
         </li>
 
         {/* Profile / Login */}
-        {user ? (
+        {authLoading ? (
+          <li style={{ display: 'inline-flex', alignItems: 'center', minWidth: '85px', justifyContent: 'center' }}>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', opacity: 0.6 }}>Loading...</span>
+          </li>
+        ) : user ? (
           <>
             {/* Show Admin separately on mobile so it's easily accessible */}
             {user.isAdmin && (

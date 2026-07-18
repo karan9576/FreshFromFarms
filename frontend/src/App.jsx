@@ -40,6 +40,7 @@ function App() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [checkoutStep, setCheckoutStep] = useState('idle'); // 'idle' | 'processing' | 'success'
   const [user, setUser] = useState(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [addressLine1, setAddressLine1] = useState('');
@@ -93,6 +94,8 @@ function App() {
         setUser(res.data);
       } catch (err) {
         setUser(null); // Not authenticated
+      } finally {
+        setAuthLoading(false);
       }
     };
     checkAuthStatus();
@@ -255,7 +258,7 @@ function App() {
   return (
     <>
       <AnnouncementBar />
-      <Navbar cartCount={cartCount} onCartClick={() => setIsCartOpen(true)} user={user} setUser={setUser} />
+      <Navbar cartCount={cartCount} onCartClick={() => setIsCartOpen(true)} user={user} setUser={setUser} authLoading={authLoading} />
       
       <Routes>
         <Route path="/" element={<Home addToCart={addToCart} cart={cart} updateQuantity={updateQuantity} />} />
