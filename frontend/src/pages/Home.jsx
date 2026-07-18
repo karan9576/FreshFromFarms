@@ -182,6 +182,28 @@ function ProductCard({ product, addToCart, cart = [], updateQuantity }) {
 export default function Home({ addToCart, cart = [], updateQuantity }) {
   const [activeCategory, setActiveCategory] = useState('all');
   const [products, setProducts] = useState(fallbackProducts);
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterLoading, setNewsletterLoading] = useState(false);
+
+  const handleNewsletterSubmit = async (e) => {
+    e.preventDefault();
+    if (!newsletterEmail) return;
+    setNewsletterLoading(true);
+    try {
+      const apiURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+      const cleanApiURL = apiURL.endsWith('/') ? apiURL.slice(0, -1) : apiURL;
+      const res = await axios.post(`${cleanApiURL}/auth/newsletter`, {
+        email: newsletterEmail
+      });
+      alert(res.data.message || 'Subscribed successfully! Check your inbox for your 10% discount code.');
+      setNewsletterEmail('');
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to subscribe to newsletter. Please try again.');
+    } finally {
+      setNewsletterLoading(false);
+    }
+  };
+
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [transparentImages, setTransparentImages] = useState({
     raw: '',
@@ -565,9 +587,18 @@ export default function Home({ addToCart, cart = [], updateQuantity }) {
           <div className="footer-col">
             <h3>Join the Fresh Farm</h3>
             <p>Sign up to receive 10% off your first order!</p>
-            <form className="newsletter-form" onSubmit={(e) => e.preventDefault()}>
-              <input type="email" placeholder="Enter your email" required />
-              <button type="submit">Join</button>
+            <form className="newsletter-form" onSubmit={handleNewsletterSubmit}>
+              <input 
+                type="email" 
+                placeholder="Enter your email" 
+                value={newsletterEmail} 
+                onChange={(e) => setNewsletterEmail(e.target.value)} 
+                required 
+                disabled={newsletterLoading}
+              />
+              <button type="submit" disabled={newsletterLoading}>
+                {newsletterLoading ? '...' : 'Join'}
+              </button>
             </form>
           </div>
         </div>

@@ -321,3 +321,39 @@ exports.sendVerificationEmail = async (userEmail, displayName, verificationCode)
 
   sendMailHelper(mailOptions);
 };
+
+exports.sendNewsletterSignupEmail = async (userEmail) => {
+  const mailOptions = {
+    to: userEmail,
+    subject: 'Your 10% Discount Code is Here! 🍿 - FreshFromFarms',
+    html: `
+      <div style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #f7f9f7; padding: 30px; border-radius: 12px; max-width: 600px; margin: 0 auto; border: 1px solid #e0eae0;">
+        <div style="text-align: center; margin-bottom: 25px;">
+          <h1 style="color: #0c3823; font-size: 28px; font-weight: 800; margin: 0;">FreshFromFarms</h1>
+          <p style="color: #cf5c36; font-size: 14px; font-weight: 700; margin: 5px 0 0; text-transform: uppercase; letter-spacing: 1px;">Mithila's Finest Foxnuts</p>
+        </div>
+
+        <div style="background-color: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(12, 56, 35, 0.04); border: 1px solid #edf2ed; text-align: center;">
+          <h2 style="color: #0c3823; font-size: 20px; font-weight: 700; margin-top: 0;">Welcome to the Fresh Farm!</h2>
+          <p style="color: #2c3e50; font-size: 16px; line-height: 1.6; margin: 0 0 25px;">
+            Thank you for subscribing to our newsletter! Enjoy 10% off your first order of premium water-cultivated organic Makhana (Indian Fox Nuts).
+          </p>
+
+          <div style="background-color: rgba(207, 92, 54, 0.08); padding: 15px; border-radius: 8px; font-size: 24px; font-weight: 800; color: #cf5c36; letter-spacing: 2px; margin: 20px auto; max-width: 250px; border: 1px solid rgba(207, 92, 54, 0.15); text-transform: uppercase;">
+            FRESHSTART10
+          </div>
+
+          <p style="color: #7f8c8d; font-size: 13px; margin-top: 25px;">
+            Simply enter this discount code during checkout to redeem your 10% off.
+          </p>
+        </div>
+
+        <div style="text-align: center; margin-top: 25px; font-size: 12px; color: #7f8c8d;">
+          <p style="margin: 0 0 5px;">© 2026 FreshFromFarms. All rights reserved.</p>
+        </div>
+      </div>
+    `
+  };
+
+  sendMailHelper(mailOptions);
+};

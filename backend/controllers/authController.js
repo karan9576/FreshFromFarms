@@ -357,3 +357,23 @@ exports.resendVerificationCode = async (req, res) => {
     res.status(500).json({ message: 'Error resending verification code. Please try again.' });
   }
 };
+
+exports.subscribeNewsletter = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: 'Email address is required' });
+    }
+
+    const emailNormalized = email.toLowerCase().trim();
+
+    // Trigger welcome subscription email containing the 10% discount coupon
+    await emailService.sendNewsletterSignupEmail(emailNormalized);
+
+    res.json({ message: 'Thank you! You have successfully subscribed. Check your inbox for your 10% discount code!' });
+  } catch (error) {
+    console.error('Newsletter subscription error:', error);
+    res.status(500).json({ message: 'Error processing subscription. Please try again.' });
+  }
+};
