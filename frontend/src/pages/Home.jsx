@@ -602,6 +602,9 @@ export default function Home({ addToCart, cart = [], updateQuantity }) {
                   onChange={(e) => setContactPhone(e.target.value)}
                   disabled={contactLoading}
                 />
+                <span style={{ display: 'inline-block', marginTop: '0.4rem', fontSize: '0.8rem', color: '#cf5c36', fontWeight: 700, backgroundColor: 'rgba(207, 92, 54, 0.08)', padding: '0.2rem 0.6rem', borderRadius: '4px' }}>
+                  ⚡ We respond to call back requests within 1 hour!
+                </span>
               </div>
               <div className="form-group">
                 <label htmlFor="contact-message">Your Message</label>
