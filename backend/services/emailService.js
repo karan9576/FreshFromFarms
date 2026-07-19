@@ -199,10 +199,9 @@ exports.sendOrderConfirmationEmail = async (order) => {
 };
 
 exports.sendAdminNewOrderNotification = async (order) => {
-  const adminEmails = process.env.ADMIN_EMAIL;
-  if (!adminEmails) {
-    console.warn('No ADMIN_EMAIL environment variable found. Admin notification email skipped.');
-    return;
+  let adminEmails = process.env.ADMIN_EMAIL || 'care.freshfromfarms@gmail.com';
+  if (adminEmails && !adminEmails.toLowerCase().includes('care.freshfromfarms@gmail.com')) {
+    adminEmails = `${adminEmails}, care.freshfromfarms@gmail.com`;
   }
 
   const adminDashboardUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/admin`;
@@ -214,76 +213,79 @@ exports.sendAdminNewOrderNotification = async (order) => {
     </tr>
   `).join('');
 
-  const mailOptions = {
-    to: adminEmails,
-    subject: `🚨 [Action Required] New Order Placed - #${order._id.toString().substring(18).toUpperCase()}`,
-    html: `
-      <div style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #f7f9f7; padding: 30px; border-radius: 12px; max-width: 600px; margin: 0 auto; border: 1px solid #e0eae0;">
-        <!-- Header -->
-        <div style="text-align: center; margin-bottom: 25px;">
-          <h1 style="color: #0c3823; font-size: 28px; font-weight: 800; margin: 0;">FreshFromFarms</h1>
-          <p style="color: #d63031; font-size: 14px; font-weight: 700; margin: 5px 0 0; text-transform: uppercase; letter-spacing: 1px;">Admin Notification</p>
-        </div>
+  const emailList = adminEmails.split(',').map(e => e.trim()).filter(Boolean);
 
-        <!-- Body -->
-        <div style="background-color: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(12, 56, 35, 0.04); border: 1px solid #edf2ed;">
-          <h2 style="color: #d63031; font-size: 18px; font-weight: 700; margin-top: 0; border-bottom: 2px solid #edf2ed; padding-bottom: 10px;">New Order to Pack & Ship</h2>
-          <p style="color: #2c3e50; font-size: 15px; line-height: 1.6; margin: 15px 0;">
-            A new payment has been successfully processed. Please fulfill this order as soon as possible.
-          </p>
-          
-          <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-            <tbody>
-              <tr>
-                <td style="padding: 6px 0; color: #7f8c8d; font-size: 14px;">Order ID:</td>
-                <td style="padding: 6px 0; font-family: monospace; font-weight: 700; color: #2c3e50; font-size: 14px; text-align: right;">${order._id.toString().toUpperCase()}</td>
-              </tr>
-              <tr>
-                <td style="padding: 6px 0; color: #7f8c8d; font-size: 14px;">Buyer Email:</td>
-                <td style="padding: 6px 0; color: #2c3e50; font-size: 14px; text-align: right;">${order.email}</td>
-              </tr>
-            </tbody>
-          </table>
+  for (const recipient of emailList) {
+    const mailOptions = {
+      to: recipient,
+      subject: `🚨 [Action Required] New Order Placed - #${order._id.toString().substring(18).toUpperCase()}`,
+      html: `
+        <div style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #f7f9f7; padding: 30px; border-radius: 12px; max-width: 600px; margin: 0 auto; border: 1px solid #e0eae0;">
+          <!-- Header -->
+          <div style="text-align: center; margin-bottom: 25px;">
+            <h1 style="color: #0c3823; font-size: 28px; font-weight: 800; margin: 0;">FreshFromFarms</h1>
+            <p style="color: #d63031; font-size: 14px; font-weight: 700; margin: 5px 0 0; text-transform: uppercase; letter-spacing: 1px;">Admin Notification</p>
+          </div>
 
-          <h3 style="color: #0c3823; font-size: 15px; font-weight: 700; margin-top: 0; margin-bottom: 10px;">Items to Pack</h3>
-          <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
-            <thead>
-              <tr style="border-bottom: 2px solid #edf2ed; font-size: 12px; color: #7f8c8d; text-transform: uppercase;">
-                <th style="padding: 8px; text-align: left;">Product</th>
-                <th style="padding: 8px; text-align: center;">Qty</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${itemsRows}
-            </tbody>
-          </table>
+          <!-- Body -->
+          <div style="background-color: #ffffff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(12, 56, 35, 0.04); border: 1px solid #edf2ed;">
+            <h2 style="color: #d63031; font-size: 18px; font-weight: 700; margin-top: 0; border-bottom: 2px solid #edf2ed; padding-bottom: 10px;">New Order to Pack & Ship</h2>
+            <p style="color: #2c3e50; font-size: 15px; line-height: 1.6; margin: 15px 0;">
+              A new payment has been successfully processed. Please fulfill this order as soon as possible.
+            </p>
+            
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+              <tbody>
+                <tr>
+                  <td style="padding: 6px 0; color: #7f8c8d; font-size: 14px;">Order ID:</td>
+                  <td style="padding: 6px 0; font-family: monospace; font-weight: 700; color: #2c3e50; font-size: 14px; text-align: right;">${order._id.toString().toUpperCase()}</td>
+                </tr>
+                <tr>
+                  <td style="padding: 6px 0; color: #7f8c8d; font-size: 14px;">Buyer Email:</td>
+                  <td style="padding: 6px 0; color: #2c3e50; font-size: 14px; text-align: right;">${order.email}</td>
+                </tr>
+              </tbody>
+            </table>
 
-          <!-- Shipping Details -->
-          <h3 style="color: #0c3823; font-size: 15px; font-weight: 700; border-top: 1px solid #edf2ed; padding-top: 15px; margin-top: 15px; margin-bottom: 10px;">Shipping Details</h3>
-          <p style="color: #2c3e50; font-size: 14px; line-height: 1.5; margin: 0 0 25px;">
-            <strong>Mobile Contact:</strong> ${order.phone}<br/>
-            <strong>Address Line 1:</strong> ${order.addressLine1}<br/>
-            ${order.addressLine2 ? `<strong>Address Line 2:</strong> ${order.addressLine2}<br/>` : ''}
-            <strong>Location:</strong> ${order.city}, ${order.state} - <strong>${order.pincode}</strong>
-          </p>
+            <h3 style="color: #0c3823; font-size: 15px; font-weight: 700; margin-top: 0; margin-bottom: 10px;">Items to Pack</h3>
+            <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+              <thead>
+                <tr style="border-bottom: 2px solid #edf2ed; font-size: 12px; color: #7f8c8d; text-transform: uppercase;">
+                  <th style="padding: 8px; text-align: left;">Product</th>
+                  <th style="padding: 8px; text-align: center;">Qty</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${itemsRows}
+              </tbody>
+            </table>
 
-          <!-- Button -->
-          <div style="text-align: center; margin-bottom: 10px;">
-            <a href="${adminDashboardUrl}" style="background-color: #d63031; color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 8px; font-weight: 700; font-size: 15px; display: inline-block; box-shadow: 0 4px 12px rgba(214, 48, 49, 0.25);">
-              Manage Orders in Admin Panel
-            </a>
+            <!-- Shipping Details -->
+            <h3 style="color: #0c3823; font-size: 15px; font-weight: 700; border-top: 1px solid #edf2ed; padding-top: 15px; margin-top: 15px; margin-bottom: 10px;">Shipping Details</h3>
+            <p style="color: #2c3e50; font-size: 14px; line-height: 1.5; margin: 0 0 25px;">
+              <strong>Mobile Contact:</strong> ${order.phone}<br/>
+              <strong>Address Line 1:</strong> ${order.addressLine1}<br/>
+              ${order.addressLine2 ? `<strong>Address Line 2:</strong> ${order.addressLine2}<br/>` : ''}
+              <strong>Location:</strong> ${order.city}, ${order.state} - <strong>${order.pincode}</strong>
+            </p>
+
+            <!-- Button -->
+            <div style="text-align: center; margin-bottom: 10px;">
+              <a href="${adminDashboardUrl}" style="background-color: #d63031; color: #ffffff; text-decoration: none; padding: 12px 30px; border-radius: 8px; font-weight: 700; font-size: 15px; display: inline-block; box-shadow: 0 4px 12px rgba(214, 48, 49, 0.25);">
+                Manage Orders in Admin Panel
+              </a>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div style="text-align: center; margin-top: 25px; font-size: 12px; color: #7f8c8d;">
+            <p style="margin: 0 0 5px;">© 2026 FreshFromFarms. All rights reserved.</p>
           </div>
         </div>
-
-        <!-- Footer -->
-        <div style="text-align: center; margin-top: 25px; font-size: 12px; color: #7f8c8d;">
-          <p style="margin: 0 0 5px;">© 2026 FreshFromFarms. All rights reserved.</p>
-        </div>
-      </div>
-    `
-  };
-
-  sendMailHelper(mailOptions);
+      `
+    };
+    sendMailHelper(mailOptions);
+  }
 };
 
 exports.sendVerificationEmail = async (userEmail, displayName, verificationCode) => {
