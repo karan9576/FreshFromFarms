@@ -7,6 +7,8 @@ import Chatbot from './Chatbot';
 import { X, Plus, Minus, ShoppingBag } from 'lucide-react';
 import axios from 'axios';
 
+import { getApiUrl } from '../utils/api';
+
 const AppContext = createContext();
 
 export function useApp() {
@@ -50,7 +52,7 @@ export default function AppShell({ children }) {
   const [stateVal, setStateVal] = useState('');
   const [pincodeLoading, setPincodeLoading] = useState(false);
 
-  const apiURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+  const apiURL = getApiUrl();
   const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'test_razorpay_key';
 
   // Autofill email when user state changes

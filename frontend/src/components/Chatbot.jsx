@@ -3,6 +3,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
+import { getApiUrl } from '../utils/api';
+
 export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
@@ -15,8 +17,7 @@ export default function Chatbot() {
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
-  const apiURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
-  const cleanApiURL = apiURL.endsWith('/') ? apiURL.slice(0, -1) : apiURL;
+  const cleanApiURL = getApiUrl();
 
   // Scroll to bottom whenever messages list changes
   useEffect(() => {

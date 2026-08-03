@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { getApiUrl } from '../utils/api';
 
 const fallbackProducts = [
   { 
@@ -192,8 +193,7 @@ export default function Home({ addToCart, cart = [], updateQuantity }) {
     if (!newsletterEmail) return;
     setNewsletterLoading(true);
     try {
-      const apiURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-      const cleanApiURL = apiURL.endsWith('/') ? apiURL.slice(0, -1) : apiURL;
+      const cleanApiURL = getApiUrl();
       const res = await axios.post(`${cleanApiURL}/auth/newsletter`, {
         email: newsletterEmail
       });
@@ -217,8 +217,7 @@ export default function Home({ addToCart, cart = [], updateQuantity }) {
     if (!contactName || !contactEmail || !contactMessage) return;
     setContactLoading(true);
     try {
-      const apiURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
-      const cleanApiURL = apiURL.endsWith('/') ? apiURL.slice(0, -1) : apiURL;
+      const cleanApiURL = getApiUrl();
       const res = await axios.post(`${cleanApiURL}/auth/contact`, {
         name: contactName,
         email: contactEmail,
@@ -275,7 +274,8 @@ export default function Home({ addToCart, cart = [], updateQuantity }) {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/products`);
+        const cleanApiURL = getApiUrl();
+        const res = await axios.get(`${cleanApiURL}/products`);
         if (res.data && res.data.length > 0) {
           const mapped = res.data.map(p => {
             let category = 'flavoured';

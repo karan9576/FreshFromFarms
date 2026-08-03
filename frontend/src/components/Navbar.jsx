@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { ShoppingBag, Menu, X, ChevronDown, LogOut, Shield, ClipboardList, User, LogIn } from 'lucide-react';
+import { getApiUrl } from '../utils/api';
 
 export default function Navbar({ cartCount, onCartClick, user, setUser, authLoading }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -12,8 +13,7 @@ export default function Navbar({ cartCount, onCartClick, user, setUser, authLoad
   const router = useRouter();
   const pathname = usePathname();
 
-  const apiURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
-  const cleanApiURL = apiURL.endsWith('/') ? apiURL.slice(0, -1) : apiURL;
+  const cleanApiURL = getApiUrl();
   const backendLogoutUrl = `${cleanApiURL}/auth/logout`;
 
   // Close dropdown when clicking outside

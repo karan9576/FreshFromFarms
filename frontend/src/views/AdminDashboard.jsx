@@ -4,6 +4,8 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import axios from 'axios';
 
+import { getApiUrl } from '../utils/api';
+
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('stats');
   const [loading, setLoading] = useState(true);
@@ -21,7 +23,7 @@ export default function AdminDashboard() {
   const [flavour, setFlavour] = useState('Raw');
   const [imageUrl, setImageUrl] = useState('');
 
-  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+  const API_URL = getApiUrl();
 
   const fetchDashboardData = async () => {
     try {

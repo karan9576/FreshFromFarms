@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import axios from 'axios';
+import { getApiUrl } from '../utils/api';
 
 export default function Login({ setUser }) {
   const searchParams = useSearchParams();
@@ -25,8 +26,7 @@ export default function Login({ setUser }) {
   const [verificationCode, setVerificationCode] = useState('');
   const [resendStatus, setResendStatus] = useState('');
 
-  const apiURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
-  const cleanApiURL = apiURL.endsWith('/') ? apiURL.slice(0, -1) : apiURL;
+  const cleanApiURL = getApiUrl();
   const backendAuthUrl = `${cleanApiURL}/auth/google`;
 
   const handleSubmit = async (e) => {

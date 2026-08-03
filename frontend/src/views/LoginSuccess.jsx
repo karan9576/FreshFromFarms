@@ -4,6 +4,8 @@ import React, { useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
 
+import { getApiUrl } from '../utils/api';
+
 export default function LoginSuccess({ setUser }) {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -16,8 +18,7 @@ export default function LoginSuccess({ setUser }) {
       // Fetch user profile immediately using the token
       const fetchUser = async () => {
         try {
-          const apiURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
-          const cleanApiURL = apiURL.endsWith('/') ? apiURL.slice(0, -1) : apiURL;
+          const cleanApiURL = getApiUrl();
           const res = await axios.get(`${cleanApiURL}/auth/current_user`, {
             headers: { Authorization: `Bearer ${token}` }
           });
