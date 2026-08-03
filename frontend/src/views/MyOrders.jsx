@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -13,7 +15,7 @@ export default function MyOrders() {
   const [guestSearchLoading, setGuestSearchLoading] = useState(false);
   const [guestError, setGuestError] = useState('');
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
   useEffect(() => {
     const fetchOrders = async () => {

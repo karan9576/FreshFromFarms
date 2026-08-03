@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
@@ -13,7 +15,7 @@ export default function Chatbot() {
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
-  const apiURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  const apiURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
   const cleanApiURL = apiURL.endsWith('/') ? apiURL.slice(0, -1) : apiURL;
 
   // Scroll to bottom whenever messages list changes

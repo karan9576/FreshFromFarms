@@ -1,15 +1,18 @@
+'use client';
+
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
 import { ShoppingBag, Menu, X, ChevronDown, LogOut, Shield, ClipboardList, User, LogIn } from 'lucide-react';
 
 export default function Navbar({ cartCount, onCartClick, user, setUser, authLoading }) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-  const navigate = useNavigate();
-  const location = useLocation();
+  const router = useRouter();
+  const pathname = usePathname();
 
-  const apiURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  const apiURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
   const cleanApiURL = apiURL.endsWith('/') ? apiURL.slice(0, -1) : apiURL;
   const backendLogoutUrl = `${cleanApiURL}/auth/logout`;
 
@@ -27,19 +30,19 @@ export default function Navbar({ cartCount, onCartClick, user, setUser, authLoad
   // Close mobile menu on route change
   useEffect(() => {
     setIsMobileMenuOpen(false);
-  }, [location.pathname]);
+  }, [pathname]);
 
   const handleLogout = (e) => {
     e.preventDefault();
     localStorage.removeItem('token');
-    setUser(null);
+    if (setUser) setUser(null);
     // Navigate to backend logout to clear any server-side cookies
     window.location.href = backendLogoutUrl;
   };
 
   return (
     <nav className="navbar">
-      <Link to="/" className="nav-brand text-gradient">FreshFromFarms</Link>
+      <Link href="/" className="nav-brand text-gradient">FreshFromFarms</Link>
       
       {/* Mobile action buttons (Cart + Hamburger) */}
       <div className="mobile-actions">
@@ -59,14 +62,14 @@ export default function Navbar({ cartCount, onCartClick, user, setUser, authLoad
       {/* Navigation Links */}
       <ul className={`nav-links ${isMobileMenuOpen ? 'active' : ''}`}>
         <li>
-          <Link to="/" className={location.pathname === '/' ? 'active-link' : ''}>Shop</Link>
+          <Link href="/" className={pathname === '/' ? 'active-link' : ''}>Shop</Link>
         </li>
         <li>
-          <Link to="/my-orders" className={location.pathname === '/my-orders' ? 'active-link' : ''}>Track Orders</Link>
+          <Link href="/my-orders" className={pathname === '/my-orders' ? 'active-link' : ''}>Track Orders</Link>
         </li>
         <li>
           <a href="/#contact" onClick={(e) => {
-            if (location.pathname === '/') {
+            if (pathname === '/') {
               e.preventDefault();
               document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
             }
@@ -83,7 +86,7 @@ export default function Navbar({ cartCount, onCartClick, user, setUser, authLoad
             {/* Show Admin separately on mobile so it's easily accessible */}
             {user.isAdmin && (
               <li className="mobile-only-link">
-                <Link to="/admin" className={location.pathname === '/admin' ? 'active-link' : ''}>Admin Dashboard</Link>
+                <Link href="/admin" className={pathname === '/admin' ? 'active-link' : ''}>Admin Dashboard</Link>
               </li>
             )}
             
@@ -96,7 +99,7 @@ export default function Navbar({ cartCount, onCartClick, user, setUser, authLoad
                 {user.picture ? (
                   <img 
                     src={user.picture} 
-                    alt={user.displayName} 
+                    alt={user.displayName || 'User'} 
                     className="profile-avatar"
                   />
                 ) : (
@@ -118,13 +121,13 @@ export default function Navbar({ cartCount, onCartClick, user, setUser, authLoad
                 <hr className="dropdown-divider" />
                 
                 {user.isAdmin && (
-                  <Link to="/admin" className="dropdown-item admin-item" onClick={() => setIsProfileDropdownOpen(false)}>
+                  <Link href="/admin" className="dropdown-item admin-item" onClick={() => setIsProfileDropdownOpen(false)}>
                     <Shield size={16} />
                     <span>Admin Panel</span>
                   </Link>
                 )}
 
-                <Link to="/my-orders" className="dropdown-item" onClick={() => setIsProfileDropdownOpen(false)}>
+                <Link href="/my-orders" className="dropdown-item" onClick={() => setIsProfileDropdownOpen(false)}>
                   <ClipboardList size={16} />
                   <span>My Orders</span>
                 </Link>
@@ -148,7 +151,7 @@ export default function Navbar({ cartCount, onCartClick, user, setUser, authLoad
           </>
         ) : (
           <li>
-            <Link to="/login" className="login-btn-pill" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+            <Link href="/login" className="login-btn-pill" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
               <LogIn size={15} />
               <span>Login</span>
             </Link>

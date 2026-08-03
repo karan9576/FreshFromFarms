@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
@@ -273,7 +275,7 @@ export default function Home({ addToCart, cart = [], updateQuantity }) {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:5000/api'}/products`);
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/products`);
         if (res.data && res.data.length > 0) {
           const mapped = res.data.map(p => {
             let category = 'flavoured';

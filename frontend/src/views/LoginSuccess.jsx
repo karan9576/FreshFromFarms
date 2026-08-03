@@ -1,10 +1,12 @@
+'use client';
+
 import React, { useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useRouter, useSearchParams } from 'next/navigation';
 import axios from 'axios';
 
 export default function LoginSuccess({ setUser }) {
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   useEffect(() => {
     const token = searchParams.get('token');
@@ -14,30 +16,30 @@ export default function LoginSuccess({ setUser }) {
       // Fetch user profile immediately using the token
       const fetchUser = async () => {
         try {
-          const apiURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+          const apiURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
           const cleanApiURL = apiURL.endsWith('/') ? apiURL.slice(0, -1) : apiURL;
           const res = await axios.get(`${cleanApiURL}/auth/current_user`, {
             headers: { Authorization: `Bearer ${token}` }
           });
-          setUser(res.data);
+          if (setUser) setUser(res.data);
           
           // Redirect: Admin goes to admin dashboard, regular goes to home page
           if (res.data.isAdmin) {
-            navigate('/admin');
+            router.push('/admin');
           } else {
-            navigate('/');
+            router.push('/');
           }
         } catch (err) {
           console.error('Error fetching user after token login:', err);
-          navigate(`/login?error=token_fetch_failed&msg=${encodeURIComponent(err.response?.data?.message || err.message)}`);
+          router.push(`/login?error=token_fetch_failed&msg=${encodeURIComponent(err.response?.data?.message || err.message)}`);
         }
       };
       
       fetchUser();
     } else {
-      navigate('/login?error=no_token_provided');
+      router.push('/login?error=no_token_provided');
     }
-  }, [searchParams, navigate, setUser]);
+  }, [searchParams, router, setUser]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', gap: '1.2rem', backgroundColor: 'var(--bg-light)' }}>

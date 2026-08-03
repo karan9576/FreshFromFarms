@@ -1,4 +1,7 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import axios from 'axios';
 
 export default function AdminDashboard() {
@@ -18,7 +21,7 @@ export default function AdminDashboard() {
   const [flavour, setFlavour] = useState('Raw');
   const [imageUrl, setImageUrl] = useState('');
 
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
 
   const fetchDashboardData = async () => {
     try {
@@ -131,7 +134,7 @@ export default function AdminDashboard() {
           <p style={{ color: 'var(--text-dark)', marginBottom: '2rem', lineHeight: '1.6' }}>
             {error}. You must sign in with an authorized administrator Google account (configured in the system environment parameters) to access this dashboard.
           </p>
-          <a href="/login" className="btn-primary" style={{ textDecoration: 'none', display: 'inline-block' }}>Go to Login</a>
+          <Link href="/login" className="btn-primary" style={{ textDecoration: 'none', display: 'inline-block' }}>Go to Login</Link>
         </div>
       </div>
     );

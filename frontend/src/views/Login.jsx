@@ -1,10 +1,12 @@
+'use client';
+
 import React, { useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useSearchParams, useRouter } from 'next/navigation';
 import axios from 'axios';
 
 export default function Login({ setUser }) {
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const errorType = searchParams.get('error');
   const errorMsg = searchParams.get('msg');
 
@@ -23,7 +25,7 @@ export default function Login({ setUser }) {
   const [verificationCode, setVerificationCode] = useState('');
   const [resendStatus, setResendStatus] = useState('');
 
-  const apiURL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  const apiURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
   const cleanApiURL = apiURL.endsWith('/') ? apiURL.slice(0, -1) : apiURL;
   const backendAuthUrl = `${cleanApiURL}/auth/google`;
 
