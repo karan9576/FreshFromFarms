@@ -1,0 +1,294 @@
+================================================================================
+            FRESHFROMFARMS - EXHAUSTIVE FEATURE & ARCHITECTURE REPORT
+================================================================================
+Generated Date : August 4, 2026
+Brand Name     : FreshFromFarms (Organic Makhana & Superfood E-Commerce)
+Official Domain: https://freshfromfarms.shop
+Support Email  : care@freshfromfarms.shop
+Backend API    : https://freshfromfarms-ly62.onrender.com/api
+================================================================================
+
+--------------------------------------------------------------------------------
+TABLE OF CONTENTS
+--------------------------------------------------------------------------------
+ 1. EXECUTIVE OVERVIEW & BRAND POSITIONING
+ 2. FULL ARCHITECTURE & TECHNOLOGY STACK
+ 3. DETAILED FRONTEND COMPONENTS & UI WIDGETS
+ 4. BACKEND API ENDPOINTS, CONTROLLERS & DATA MODELS
+ 5. SECURITY, RATE LIMITING & VALIDATION FRAMEWORK
+ 6. EMAIL ENGINE & TRANSACTIONAL NOTIFICATION PIPELINE
+ 7. DEVOPS, DEPLOYMENT PIPELINE & CLOUD INFRASTRUCTURE
+ 8. MASTER FEATURE INVENTORY (CHECKLIST OF ALL IMPLEMENTED FEATURES)
+
+
+================================================================================
+1. EXECUTIVE OVERVIEW & BRAND POSITIONING
+================================================================================
+FreshFromFarms is a modern, direct-to-consumer (D2C) e-commerce web platform 
+dedicated to 100% natural, GI-tagged, water-cultivated organic Makhana (Indian 
+Fox Nuts / Lotus Seeds) sourced directly from the water fields of Bihar, India.
+
+The application delivers an enterprise-grade shopping experience combining 3D 
+interactive graphics, instant checkout, real-time cart persistence, automated email 
+invoices, rich Google Shopping SEO integration, and robust cloud security.
+
+
+================================================================================
+2. FULL ARCHITECTURE & TECHNOLOGY STACK
+================================================================================
+FRONTEND SYSTEM:
+- Framework       : Next.js 16 (App Router with Turbopack SSR/SSG rendering)
+- Core Library    : React 18 with Lucide React Icons
+- Styling Engine  : Custom Vanilla CSS Design System with dark mode tokens, 
+                    glassmorphism overlays, responsive grid math, and smooth keyframe animations
+- 3D Visualizer   : Three.js / MakhanaModel 3D Canvas visualizer for interactive graphics
+- State Management: React Context API (`AppContext`) + LocalStorage (`fff_cart`) persistence
+
+BACKEND SYSTEM:
+- Runtime         : Node.js & Express.js RESTful API
+- Database        : MongoDB Atlas with Mongoose Object Data Modeling (ODM)
+- Authentication  : Passport.js (Google OAuth 2.0 & Session Management)
+- Security Layer  : Express CORS whitelist, Rate Limiting, Input Validation, 
+                    Upload Security, Global Error Masking
+
+PAYMENT GATEWAY:
+- Integration     : Razorpay JS SDK + Backend Order Creation API
+- Credentials     : Active Razorpay Test Key (`rzp_test_TLfcrrpSYAfpKX`)
+- Precision Math  : Server-side paise calculation (`Math.round(amount * 100)`)
+
+EMAIL DISPATCH ENGINE:
+- Primary Engine  : Brevo REST API (HTTPS Port 443) for instant (<200ms) cloud delivery
+- Secondary       : Nodemailer Hostinger SMTP fallback (Ports 587 & 465)
+- Support Email   : care@freshfromfarms.shop
+
+INFRASTRUCTURE & DEPLOYMENT:
+- Frontend Host   : Vercel Edge Network CDN with Custom SSL Certificate
+- Backend Host    : Render Cloud Application Server
+- DNS Management  : Hostinger DNS Zone Editor
+- 24/7 Keep-Alive : UptimeRobot pinger (`https://freshfromfarms-ly62.onrender.com/`)
+
+
+================================================================================
+3. DETAILED FRONTEND COMPONENTS & UI WIDGETS
+================================================================================
+
+1. AnnouncementBar (`components/AnnouncementBar.jsx`):
+   - Animated top header announcement ticker.
+   - Highlights Free Express Shipping above ₹499 and coupon promo `FRESHSTART10`.
+
+2. Navigation Bar (`components/Navbar.jsx`):
+   - Brand Logo with custom Makhana favicon badge.
+   - Smooth navigation links (`Home`, `Products`, `Why Makhana`, `Reviews`, `FAQ`).
+   - Customer account profile badge / Google OAuth sign-in trigger.
+   - Interactive Shopping Bag button with dynamic animated cart item count badge.
+
+3. Interactive 3D Superfood Canvas (`components/3D/MakhanaModel.jsx`):
+   - Three.js WebGL canvas rendering a 3D textured Makhana (Lotus Seed).
+   - Mouse click-and-drag 360-degree rotation.
+   - Dynamic lighting with ambient and directional light maps.
+
+4. AI Customer Support Chatbot (`components/Chatbot.jsx`):
+   - Floating AI assistant widget ("Farmy - FreshFromFarms AI Assistant").
+   - Quick-select prompt chips (Shipping, Nutritional Benefits, Bulk Orders, Order Tracking).
+   - Real-time chat bubbles with timestamping and automated responses.
+   - Isolated z-index layering (`z-index: 9000`) preventing UI overlap with cart drawers.
+
+5. Slide-Out Cart Drawer (`components/AppShell.jsx`):
+   - Drawer slide-out animation triggered from navbar cart button.
+   - Silent item addition from product cards without interrupting browsing.
+   - Quantity increment/decrement buttons (`+` / `-` / `Remove`).
+   - Dynamic order summary calculation (Total INR).
+   - Integrated delivery form: Email, Mobile Phone, Address Line 1, Address Line 2, 
+     PIN Code, City, State.
+   - Automatic Indian PIN Code auto-fill API integration (autofills City and State).
+   - Razorpay Checkout overlay trigger.
+
+6. Home Page & Catalog (`views/Home.jsx`):
+   - Hero Section with CTA buttons ("Shop Organic Superfood", "Explore Flavours").
+   - Trust Badges grid (100% Water-Cultivated, FSSAI Certified, GI Tagged, Zero Trans-Fat).
+   - Product Catalog Grid with real-time flavour filter tabs:
+     * All Flavours
+     * Raw Premium Organic Makhana
+     * Himalayan Pink Salt Roasted Makhana
+     * Spicy Peri Peri Roasted Makhana
+     * Pudina Crisp Herb Roasted Makhana
+     * Creamy Cheddar Cheese Makhana
+   - Pack weight selector pills (`100g`, `200g`, `250g`, `500g`, `1kg`) with live price math.
+   - Sustainable Water-Cultivation Infographic section with Bihar harvesting steps.
+   - Nutritional Comparison Table (Makhana vs Potato Chips vs Popcorn vs Roasted Chana).
+   - Verified Customer Review Slider with 5-star ratings and customer quotes.
+   - FAQ Accordion with expandable Q&A items.
+   - Contact Us Form section (Name, Email, Mobile, Message) with instant email dispatch.
+   - Brand Footer with quick links, social media icons, FSSAI registration info, and copyright.
+
+7. Dynamic Product Detail Pages (`app/product/[id]/page.jsx`):
+   - Individual SSR/SSG routes for every signature product flavour.
+   - High-resolution product image gallery and nutritional feature badges.
+   - Breadcrumb navigation (`Home` / `Products` / `Product Name`).
+   - Rich JSON-LD structured data for Google Shopping listings.
+
+8. User Authentication Views (`views/Login.jsx` & `views/LoginSuccess.jsx`):
+   - Google OAuth 2.0 One-Tap Login button.
+   - Tabbed Email + Password Sign-In / Registration form.
+   - Password visibility toggle (Show/Hide).
+   - 6-Digit Email OTP Verification Code modal.
+   - Forgot Password reset request workflow.
+   - Automatic post-authentication URL token parsing and session redirect.
+
+9. Customer Order Tracking View (`views/MyOrders.jsx`):
+   - Order lookup by Order ID or Mobile Number.
+   - Active Orders vs Past Orders tabbed views.
+   - Order itemization, quantities, total paid, shipping address, and payment method badge.
+   - Visual order progress timeline bar (`Order Placed` -> `Processing` -> `Shipped` -> `Delivered`).
+
+10. Admin Analytics & Order Management Dashboard (`views/AdminDashboard.jsx`):
+    - Key Metrics Cards: Total Revenue, Total Orders Count, Average Order Value.
+    - Daily Revenue & Orders Trend Analytics Chart.
+    - Order Filter Tabs: `All`, `Paid`, `Pending`, `Shipped`, `Delivered`.
+    - Order Search Bar (filter by Order ID, Customer Phone, or Email).
+    - Status Update Action Dropdown (change order status in real-time).
+    - Product Inventory Manager (Add Product Modal, Stock Status, Price Editor).
+
+
+================================================================================
+4. BACKEND API ENDPOINTS, CONTROLLERS & DATA MODELS
+================================================================================
+
+DATA MODELS (`backend/models/`):
+- `User.js`   : Stores Google ID, Email, Name, Hashed Password, Email Verification Status, 
+                and Reset Tokens.
+- `Product.js`: Stores Product Slug, Name, Price, Original Price, Description, Flavour, 
+                Weight, Nutrition, Rating, and Stock.
+- `Order.js`  : Stores User Ref, Email, Phone, Address Coordinates, Items Array, Total Amount, 
+                Razorpay Order ID, Razorpay Payment ID, and Order Status.
+- `Stat.js`   : Stores Date string (`YYYY-MM-DD`) and aggregated daily Revenue total.
+
+API ENDPOINTS & CONTROLLERS (`backend/routes/` & `backend/controllers/`):
+
+1. Auth Routes (`/api/auth`):
+   - `POST /register`        : Registers new user and sends 6-digit OTP code email.
+   - `POST /verify-email`    : Verifies 6-digit OTP code and activates account.
+   - `POST /login`           : Authenticates user credentials via Passport Local strategy.
+   - `GET  /google`          : Initiates Google OAuth 2.0 redirection flow.
+   - `GET  /google/callback` : Handles Google OAuth callback and session creation.
+   - `GET  /status`          : Returns current authenticated user profile state.
+   - `POST /logout`          : Destroys user session cookie.
+
+2. Product Routes (`/api/products`):
+   - `GET  /`                : Fetches all available products from database.
+   - `GET  /:id`             : Fetches single product details by ID or slug.
+
+3. Payment Routes (`/api/payment`):
+   - `POST /order`           : Creates official Razorpay Order via REST API.
+   - `POST /verify`          : Verifies Razorpay HMAC SHA256 payment signature, saves order, 
+                               increments daily revenue, and triggers invoice emails.
+
+4. Admin Routes (`/api/admin`):
+   - `GET  /stats`           : Aggregates total revenue, order count, and sales trends.
+   - `GET  /orders`          : Lists all customer orders with filtering options.
+   - `PUT  /orders/:id`      : Updates order status (`Shipped`, `Delivered`).
+
+
+================================================================================
+5. SECURITY, RATE LIMITING & VALIDATION FRAMEWORK
+================================================================================
+
+1. Multi-Tier Rate Limiter (`middleware/rateLimiter.js`):
+   - Auth Tier     : Strict limit (10 requests / 15 mins) with per-IP and per-account 
+                     exponential backoff for login and password endpoints.
+   - Public Tier   : Moderate limit (100 requests / 15 mins) for public catalog browsing.
+   - Authed Tier   : Looser limit (300 requests / 15 mins) for logged-in user actions 
+                     and checkout creation APIs.
+
+2. Input Validator (`middleware/inputValidator.js`):
+   - Validates 6-digit numeric Indian PIN Codes using REGEX (`/^\d{6}$/`).
+   - Validates 10-digit mobile phone numbers using REGEX (`/^[6-9]\d{9}$/`).
+   - Validates email syntax and positive numerical transaction amounts.
+
+3. Upload Security (`middleware/uploadSecurity.js`):
+   - Restricts file uploads to approved image MIME types (`image/jpeg`, `image/png`, `image/webp`).
+   - Enforces maximum file size limit of 5MB.
+   - Sanitizes uploaded file names to prevent path traversal attacks.
+
+4. Express CORS Whitelist:
+   - Restricts API access to authorized domains:
+     `https://freshfromfarms.shop`, `https://www.freshfromfarms.shop`, 
+     `https://fresh-from-farms-red.vercel.app`, and local dev ports.
+
+5. Global Error Masking (`server.js`):
+   - Catches unhandled server exceptions and returns clean sanitized error messages, 
+     preventing internal stack traces from leaking to clients.
+
+
+================================================================================
+6. EMAIL ENGINE & TRANSACTIONAL NOTIFICATION PIPELINE
+================================================================================
+
+1. Primary Brevo HTTPS REST API Transport:
+   - Calls Brevo REST API (`https://api.brevo.com/v3/smtp/email`) directly over HTTPS Port 443.
+   - Delivers emails in <200ms without cloud hosting SMTP port timeout delays.
+
+2. Automated Email Templates (`services/emailService.js`):
+   - Signup Welcome Email with 10% discount promo code (`FRESHSTART10`).
+   - Email Security Verification 6-Digit OTP Code email.
+   - Order Confirmation Invoice email with itemized table, total paid, and shipping coordinates.
+   - Admin New Order Notification email alerting admins to pack and ship.
+   - Customer Contact Form Inquiry notification email.
+
+
+================================================================================
+7. DEVOPS, DEPLOYMENT PIPELINE & CLOUD INFRASTRUCTURE
+================================================================================
+
+1. Dual-Branch Git Workflow:
+   - `dev` Branch  : Local feature development and testing.
+   - `main` Branch : Production release branch linked to automated Vercel & Render builds.
+
+2. DNS & Custom Domain Records:
+   - Apex Domain `freshfromfarms.shop` -> Vercel A Record (`76.76.21.21`).
+   - CNAME `www`                        -> `cname.vercel-dns.com`.
+   - CNAME `api`                        -> `freshfromfarms-ly62.onrender.com`.
+
+3. 24/7 Keep-Alive Monitor:
+   - UptimeRobot pinger hitting `https://freshfromfarms-ly62.onrender.com/` 
+     every 5 minutes to keep Render free instance active with zero cold start delays.
+
+
+================================================================================
+8. MASTER FEATURE INVENTORY (CHECKLIST)
+================================================================================
+[x] Custom Domain & SSL Integration (`https://freshfromfarms.shop`)
+[x] Official Professional Email Configuration (`care@freshfromfarms.shop`)
+[x] Interactive 3D Makhana Model Canvas (Three.js WebGL)
+[x] Announcement Banner Ticker (Promo Discount & Shipping threshold)
+[x] Product Catalog Grid with Flavour Filter Pills
+[x] Dynamic Pack Weight Selector Pills (100g, 200g, 250g, 500g, 1kg)
+[x] Slide-Out Shopping Cart Drawer with Real-Time Total Math
+[x] Cart LocalStorage Persistence (`fff_cart`)
+[x] Indian PIN Code Auto-Fill API Integration
+[x] Razorpay Payment Gateway Order Creation & Verification (`rzp_test_TLfcrrpSYAfpKX`)
+[x] Instant Brevo HTTPS Email Dispatch Engine (<200ms)
+[x] Automated Order Invoice Emails to Customer
+[x] Automated New Order Alert Notifications to Admin
+[x] One-Tap Google OAuth 2.0 Login
+[x] Email/Password Sign-In with 6-Digit Verification OTP Code
+[x] Customer Order Tracking Dashboard (`/my-orders`)
+[x] Admin Analytics & Order Status Management Dashboard (`/admin`)
+[x] AI Customer Support Chatbot Widget ("Farmy")
+[x] Google Shopping Product Schema (JSON-LD)
+[x] Organization & Contact Schema (JSON-LD)
+[x] FAQ Page Schema (JSON-LD)
+[x] Breadcrumb List Schema (JSON-LD)
+[x] Dynamic XML Sitemap (`/sitemap.xml`)
+[x] Robots Crawler Rules (`/robots.txt`)
+[x] Multi-Tier Rate Limiting Middleware
+[x] Input Validation & Sanitization Middleware
+[x] Upload Security & MIME Validation
+[x] CORS Domain Whitelisting
+[x] Global Error Masking
+[x] Dual-Branch Git Workflow (`dev` & `main`)
+[x] 24/7 UptimeRobot Keep-Alive Service
+
+================================================================================
+                    REPORT END - FRESHFROMFARMS 2026
+================================================================================
