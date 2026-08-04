@@ -199,7 +199,12 @@ export default function AppShell({ children }) {
       // 1. Create order on Express backend
       const orderResponse = await axios.post(
         `${apiURL}/payment/order`, 
-        { amount: cartTotal },
+        { 
+          amount: cartTotal,
+          phone: phone ? phone.trim() : undefined,
+          pincode: pincode ? pincode.trim() : undefined,
+          address: addressLine1 ? addressLine1.trim() : undefined
+        },
         { withCredentials: true }
       );
       
@@ -208,12 +213,12 @@ export default function AppShell({ children }) {
       
       // 2. Open Razorpay Checkout overlay
       const options = {
-        key: razorpayKey,
+        key: razorpayKey || 'rzp_test_TDnk2IxhFOao0q',
         amount: order.amount,
         currency: order.currency,
         name: 'FreshFromFarms',
         description: 'Roasted Foxnuts Superfood Order',
-        image: '/favicon.svg',
+        image: '/makhana_favicon.png',
         order_id: order.id,
         handler: async function (response) {
           setCheckoutStep('processing');
@@ -257,15 +262,15 @@ export default function AppShell({ children }) {
               setCheckoutStep('idle');
             }
           } catch (err) {
-            console.error(err);
+            console.error('Payment Verification Error:', err);
             alert('Error verifying transaction authentication signature.');
             setCheckoutStep('idle');
           }
         },
         prefill: {
-          name: 'Healthy Snacker',
-          email: 'snack@freshfromfarms.com',
-          contact: '9999999999'
+          name: user ? user.name : 'Healthy Snacker',
+          email: email || (user ? user.email : 'snack@freshfromfarms.com'),
+          contact: phone || '9999999999'
         },
         theme: {
           color: '#0c3823'
@@ -276,13 +281,14 @@ export default function AppShell({ children }) {
       rzp.open();
 
     } catch (err) {
-      console.error(err);
+      console.error('Checkout Error:', err);
       if (err.response && err.response.status === 401) {
         alert('Please login using your account to proceed to checkout!');
         setIsCartOpen(false);
         window.location.href = '/login';
       } else {
-        alert('Error creating transaction order. Please check backend connection and Razorpay credentials.');
+        const errorMsg = err.response?.data?.message || err.response?.data?.error || err.message || 'Error creating transaction order.';
+        alert(`Checkout Error: ${errorMsg}`);
       }
       setCheckoutStep('idle');
     }

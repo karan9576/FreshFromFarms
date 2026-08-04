@@ -4,16 +4,20 @@ const Stat = require('../models/Stat');
 const Order = require('../models/Order');
 
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
+  key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_TDnk2IxhFOao0q',
+  key_secret: process.env.RAZORPAY_KEY_SECRET || 'Gf7VRzJTMSau9SmaZNrVH67f',
 });
 
 exports.createOrder = async (req, res) => {
   try {
     const { amount, currency } = req.body;
     
+    if (!amount || isNaN(amount) || amount <= 0) {
+      return res.status(400).json({ message: 'Invalid order amount specified.' });
+    }
+
     const options = {
-      amount: amount * 100, // convert INR to paise
+      amount: Math.round(parseFloat(amount) * 100), // convert INR to paise, integer
       currency: currency || 'INR',
       receipt: `receipt_${Date.now()}`
     };
@@ -21,7 +25,8 @@ exports.createOrder = async (req, res) => {
     const order = await razorpay.orders.create(options);
     res.json(order);
   } catch (error) {
-    res.status(500).json({ message: 'Error creating razorpay order' });
+    console.error('Error creating Razorpay order:', error);
+    res.status(500).json({ message: error?.error?.description || error?.message || 'Error creating razorpay order' });
   }
 };
 
