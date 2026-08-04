@@ -23,7 +23,11 @@ exports.createOrder = async (req, res) => {
     };
 
     const order = await razorpay.orders.create(options);
-    res.json(order);
+    const razorpayKeyId = process.env.RAZORPAY_KEY_ID || 'rzp_test_TDnk2IxhFOao0q';
+    res.json({
+      ...order,
+      key: razorpayKeyId
+    });
   } catch (error) {
     console.error('Error creating Razorpay order:', error);
     res.status(500).json({ message: error?.error?.description || error?.message || 'Error creating razorpay order' });

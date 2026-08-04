@@ -213,13 +213,18 @@ export default function AppShell({ children }) {
       
       // 2. Open Razorpay Checkout overlay
       const options = {
-        key: razorpayKey || 'rzp_test_TDnk2IxhFOao0q',
+        key: order.key || razorpayKey || 'rzp_test_TDnk2IxhFOao0q',
         amount: order.amount,
         currency: order.currency,
         name: 'FreshFromFarms',
         description: 'Roasted Foxnuts Superfood Order',
-        image: '/makhana_favicon.png',
+        image: typeof window !== 'undefined' ? `${window.location.origin}/makhana_favicon.png` : '/makhana_favicon.png',
         order_id: order.id,
+        modal: {
+          ondismiss: function () {
+            setCheckoutStep('idle');
+          }
+        },
         handler: async function (response) {
           setCheckoutStep('processing');
           try {
