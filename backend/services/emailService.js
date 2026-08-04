@@ -2,18 +2,53 @@ const axios = require('axios');
 const nodemailer = require('nodemailer');
 
 const sendMailHelper = async (mailOptions) => {
-  let brevoSent = false;
-  const cleanApiKey = process.env.BREVO_API_KEY ? process.env.BREVO_API_KEY.trim() : null;
+  let emailSent = false;
+  const senderEmail = process.env.SENDER_EMAIL || process.env.SMTP_USER || 'care.freshfromfarms@gmail.com';
+  const senderName = process.env.SENDER_NAME || 'FreshFromFarms';
 
-  // PRIMARY: Brevo REST API via axios (works on Render free tier — no SMTP needed)
+  // 1. PRIMARY FOR HOSTINGER PROFESSIONAL EMAIL: Nodemailer SMTP
+  if (process.env.SMTP_USER && process.env.SMTP_PASS) {
+    try {
+      const port = parseInt(process.env.SMTP_PORT) || 465;
+      const isSecure = port === 465;
+      
+      const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST || 'smtp.hostinger.com',
+        port,
+        secure: isSecure,
+        auth: {
+          user: process.env.SMTP_USER.trim(),
+          pass: process.env.SMTP_PASS.trim()
+        },
+        connectionTimeout: 10000,
+        greetingTimeout: 10000,
+        socketTimeout: 10000
+      });
+
+      const info = await transporter.sendMail({
+        from: `"${senderName}" <${senderEmail}>`,
+        ...mailOptions
+      });
+
+      console.log(`📧 Email sent via Hostinger SMTP to: ${mailOptions.to} | ID: ${info.messageId}`);
+      emailSent = true;
+    } catch (smtpErr) {
+      console.error('❌ Hostinger SMTP email failed, attempting Brevo fallback... Error:', smtpErr.message);
+    }
+  }
+
+  if (emailSent) return;
+
+  // 2. SECONDARY FALLBACK: Brevo REST API via axios
+  const cleanApiKey = process.env.BREVO_API_KEY ? process.env.BREVO_API_KEY.trim() : null;
   if (cleanApiKey) {
     try {
       await axios.post(
         'https://api.brevo.com/v3/smtp/email',
         {
           sender: {
-            name: 'FreshFromFarms',
-            email: process.env.SENDER_EMAIL || process.env.SMTP_USER || 'care.freshfromfarms@gmail.com'
+            name: senderName,
+            email: senderEmail
           },
           to: [{ email: mailOptions.to }],
           subject: mailOptions.subject,
@@ -26,39 +61,16 @@ const sendMailHelper = async (mailOptions) => {
           }
         }
       );
-      console.log(`📧 Email sent via Brevo to: ${mailOptions.to}`);
-      brevoSent = true;
-    } catch (err) {
-      console.error('❌ Brevo send failed, trying SMTP fallback... Error:', err.response?.data || err.message);
+      console.log(`📧 Email sent via Brevo fallback to: ${mailOptions.to}`);
+      emailSent = true;
+    } catch (brevoErr) {
+      console.error('❌ Brevo API send failed... Error:', brevoErr.response?.data || brevoErr.message);
     }
   }
 
-  if (brevoSent) return;
-
-  // FALLBACK: Nodemailer SMTP (for local development or if Brevo API fails)
-  if (process.env.SMTP_USER && process.env.SMTP_PASS) {
-    try {
-      const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST || 'smtp.gmail.com',
-        port: parseInt(process.env.SMTP_PORT) || 587,
-        secure: process.env.SMTP_PORT === '465',
-        auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
-        connectionTimeout: 10000, // Fail fast (10s) if blocked by cloud IP restrictions
-        greetingTimeout: 10000,
-        socketTimeout: 10000
-      });
-      const info = await transporter.sendMail({
-        from: `"FreshFromFarms" <${process.env.SMTP_USER}>`,
-        ...mailOptions
-      });
-      console.log(`📧 Email sent via SMTP to: ${mailOptions.to} | ID: ${info.messageId}`);
-    } catch (err) {
-      console.error('❌ SMTP email failed:', err.message);
-    }
-    return;
+  if (!emailSent) {
+    console.warn('[Email] No email provider succeeded. Check SMTP or Brevo API settings.');
   }
-
-  console.warn('[Email] No email provider configured or succeeded (set BREVO_API_KEY or SMTP parameters correctly).');
 };
 
 exports.sendSignupEmail = async (userEmail, displayName) => {
