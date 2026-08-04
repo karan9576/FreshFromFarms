@@ -2,12 +2,10 @@ const axios = require('axios');
 const nodemailer = require('nodemailer');
 
 const sendMailHelper = async (mailOptions) => {
-  let emailSent = false;
   const senderEmail = process.env.SENDER_EMAIL || process.env.SMTP_USER || 'care@freshfromfarms.shop';
   const senderName = process.env.SENDER_NAME || 'FreshFromFarms';
   const cleanApiKey = process.env.BREVO_API_KEY ? process.env.BREVO_API_KEY.trim() : null;
 
-  // 1. PRIMARY FOR CLOUD SERVERS (Render/Vercel): Brevo HTTPS REST API (Port 443 - Instant <200ms Delivery)
   if (cleanApiKey) {
     try {
       await axios.post(
@@ -30,56 +28,11 @@ const sendMailHelper = async (mailOptions) => {
         }
       );
       console.log(`⚡ Email sent instantly via Brevo API to: ${mailOptions.to}`);
-      emailSent = true;
     } catch (brevoErr) {
-      console.warn('⚠️ Brevo API send attempt failed, trying Nodemailer SMTP fallback... Error:', brevoErr.response?.data || brevoErr.message);
+      console.error('❌ Brevo API email send error:', brevoErr.response?.data || brevoErr.message);
     }
-  }
-
-  if (emailSent) return;
-
-  // 2. SECONDARY FALLBACK: Nodemailer Hostinger SMTP
-  if (process.env.SMTP_USER && process.env.SMTP_PASS) {
-    const configuredPort = parseInt(process.env.SMTP_PORT) || 587;
-    const portsToTry = [
-      { port: configuredPort, secure: configuredPort === 465 },
-      { port: configuredPort === 587 ? 465 : 587, secure: configuredPort !== 587 }
-    ];
-
-    for (const config of portsToTry) {
-      try {
-        const transporter = nodemailer.createTransport({
-          host: process.env.SMTP_HOST || 'smtp.hostinger.com',
-          port: config.port,
-          secure: config.secure,
-          auth: {
-            user: process.env.SMTP_USER.trim(),
-            pass: process.env.SMTP_PASS.trim()
-          },
-          tls: {
-            rejectUnauthorized: false
-          },
-          connectionTimeout: 4000,
-          greetingTimeout: 4000,
-          socketTimeout: 4000
-        });
-
-        const info = await transporter.sendMail({
-          from: `"${senderName}" <${senderEmail}>`,
-          ...mailOptions
-        });
-
-        console.log(`📧 Email sent via Hostinger SMTP (Port ${config.port}) to: ${mailOptions.to} | ID: ${info.messageId}`);
-        emailSent = true;
-        break;
-      } catch (smtpErr) {
-        console.warn(`⚠️ Hostinger SMTP Port ${config.port} attempt: ${smtpErr.message}`);
-      }
-    }
-  }
-
-  if (!emailSent) {
-    console.warn('[Email] No email provider succeeded. Check Brevo API key or Hostinger SMTP settings.');
+  } else {
+    console.warn('[Email] BREVO_API_KEY is missing from environment variables.');
   }
 };
 
