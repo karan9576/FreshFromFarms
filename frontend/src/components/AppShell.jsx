@@ -145,8 +145,7 @@ export default function AppShell({ children }) {
       return [...prevCart, { ...product, weight: finalWeight, price: finalPrice, quantity: 1 }];
     });
 
-    // Automatically slide open the side cart drawer when an item is added
-    setIsCartOpen(true);
+    // Cart item added silently without opening drawer
   };
 
   const updateQuantity = (id, weight, delta) => {
