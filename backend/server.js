@@ -21,8 +21,22 @@ require('./config/passport')(passport);
 
 // Middleware
 app.use(express.json({ limit: '5mb' }));
+const allowedOrigins = [
+  'https://freshfromfarms.shop',
+  'https://www.freshfromfarms.shop',
+  'https://fresh-from-farms-red.vercel.app',
+  'http://localhost:5173',
+  'http://localhost:3000'
+];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app') || origin.endsWith('freshfromfarms.shop')) {
+      callback(null, true);
+    } else {
+      callback(null, true);
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
