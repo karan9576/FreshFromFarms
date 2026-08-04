@@ -106,8 +106,6 @@ export default function AppShell({ children }) {
     checkAuthStatus();
   }, [apiURL]);
 
-  const [paymentMethod, setPaymentMethod] = useState('online'); // 'online' | 'cod'
-
   // Load cart from localStorage on mount
   useEffect(() => {
     try {
@@ -191,48 +189,7 @@ export default function AppShell({ children }) {
     try {
       setCheckoutStep('processing');
       
-      // 1. Handle Cash on Delivery (COD) Payment Flow
-      if (paymentMethod === 'cod') {
-        const codRes = await axios.post(
-          `${apiURL}/payment/cod`,
-          {
-            cartItems: cart,
-            totalAmount: cartTotal,
-            shippingInfo: {
-              email: email.trim(),
-              phone: phone.trim(),
-              addressLine1: addressLine1.trim(),
-              addressLine2: addressLine2 ? addressLine2.trim() : '',
-              city: city.trim(),
-              state: stateVal.trim(),
-              pincode: pincode.trim()
-            }
-          },
-          { withCredentials: true }
-        );
-
-        if (codRes.status === 200) {
-          setCheckoutStep('success');
-          setTimeout(() => {
-            setCart([]);
-            setPhone('');
-            setEmail('');
-            setAddressLine1('');
-            setAddressLine2('');
-            setPincode('');
-            setCity('');
-            setStateVal('');
-            setIsCartOpen(false);
-            setCheckoutStep('idle');
-          }, 2500);
-        } else {
-          alert('Failed to place Cash on Delivery order.');
-          setCheckoutStep('idle');
-        }
-        return;
-      }
-
-      // 2. Handle Online Payment (Razorpay) Flow
+      // Handle Online Payment (Razorpay) Flow
       const isLoaded = await loadRazorpayScript();
       if (!isLoaded) {
         alert('Razorpay SDK failed to load. Please check your internet connection.');
@@ -412,49 +369,6 @@ export default function AppShell({ children }) {
               </div>
             </div>
 
-            {/* Payment Method Selector Pills */}
-            <div style={{ marginBottom: '1rem' }}>
-              <h4 style={{ margin: '0 0 0.4rem 0', color: 'var(--primary-color)', fontSize: '0.9rem' }}>Select Payment Method</h4>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <button 
-                  type="button" 
-                  onClick={() => setPaymentMethod('online')}
-                  style={{
-                    flex: 1,
-                    padding: '0.65rem',
-                    borderRadius: '8px',
-                    border: paymentMethod === 'online' ? '2px solid var(--primary-color)' : '1px solid #ccc',
-                    background: paymentMethod === 'online' ? '#e8f5e9' : '#fff',
-                    color: paymentMethod === 'online' ? '#0c3823' : '#555',
-                    fontWeight: 700,
-                    fontSize: '0.82rem',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  💳 Online / Card / UPI
-                </button>
-                <button 
-                  type="button" 
-                  onClick={() => setPaymentMethod('cod')}
-                  style={{
-                    flex: 1,
-                    padding: '0.65rem',
-                    borderRadius: '8px',
-                    border: paymentMethod === 'cod' ? '2px solid var(--primary-color)' : '1px solid #ccc',
-                    background: paymentMethod === 'cod' ? '#e8f5e9' : '#fff',
-                    color: paymentMethod === 'cod' ? '#0c3823' : '#555',
-                    fontWeight: 700,
-                    fontSize: '0.82rem',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  💵 Cash on Delivery
-                </button>
-              </div>
-            </div>
-
             <div className="cart-total-row">
               <span>Total Amount:</span>
               <span className="cart-total-price">₹{cartTotal}</span>
@@ -466,11 +380,7 @@ export default function AppShell({ children }) {
               disabled={checkoutStep === 'processing'}
               style={{ width: '100%' }}
             >
-              {checkoutStep === 'processing' 
-                ? 'Processing...' 
-                : paymentMethod === 'cod' 
-                  ? 'Place Cash on Delivery Order' 
-                  : 'Pay Online via Razorpay'}
+              {checkoutStep === 'processing' ? 'Processing...' : 'Proceed to Checkout'}
             </button>
           </div>
         )}
