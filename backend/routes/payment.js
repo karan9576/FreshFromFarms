@@ -11,5 +11,6 @@ const isAuthenticated = (req, res, next) => {
 
 router.post('/order', authedRateLimiter, validateCreateOrder, paymentController.createOrder);
 router.post('/verify', authedRateLimiter, validateVerifyPayment, paymentController.verifyPayment);
+router.post('/cod', authedRateLimiter, paymentController.createCodOrder);
 
 module.exports = router;

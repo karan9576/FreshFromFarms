@@ -96,3 +96,49 @@ exports.verifyPayment = async (req, res) => {
     res.status(500).json({ message: 'Error verifying payment' });
   }
 };
+
+exports.createCodOrder = async (req, res) => {
+  try {
+    const { cartItems, shippingInfo, totalAmount } = req.body;
+    
+    if (!cartItems || !Array.isArray(cartItems) || cartItems.length === 0) {
+      return res.status(400).json({ message: 'Cart items are required.' });
+    }
+
+    // Save COD Order record in database
+    const newOrder = await Order.create({
+      user: req.user ? req.user._id : null,
+      email: shippingInfo?.email || (req.user ? req.user.email : 'anonymous@freshfromfarms.com'),
+      phone: shippingInfo?.phone || '9999999999',
+      addressLine1: shippingInfo?.addressLine1 || 'Default Address Line 1',
+      addressLine2: shippingInfo?.addressLine2 || '',
+      city: shippingInfo?.city || 'Default City',
+      state: shippingInfo?.state || 'Default State',
+      pincode: shippingInfo?.pincode || '000000',
+      items: (cartItems || []).map(item => ({
+        name: item.name,
+        weight: item.weight,
+        price: item.price,
+        quantity: item.quantity
+      })),
+      totalAmount: totalAmount || 0,
+      razorpayOrderId: `COD_${Date.now()}`,
+      razorpayPaymentId: `COD_PAY_${Date.now()}`,
+      status: 'Pending (COD)'
+    });
+
+    // Send invoice confirmation email
+    try {
+      const emailService = require('../services/emailService');
+      emailService.sendOrderConfirmationEmail(newOrder);
+      emailService.sendAdminNewOrderNotification(newOrder);
+    } catch (err) {
+      console.error('Error triggering COD order email notification:', err);
+    }
+
+    return res.json({ message: 'COD Order placed successfully!', orderId: newOrder._id });
+  } catch (error) {
+    console.error('Error placing COD order:', error);
+    res.status(500).json({ message: 'Error creating COD order' });
+  }
+};
