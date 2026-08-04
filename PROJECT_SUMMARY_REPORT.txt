@@ -250,7 +250,7 @@ API ENDPOINTS & CONTROLLERS (`backend/routes/` & `backend/controllers/`):
 1. Dual-Branch Git Workflow:
    - `dev` Branch  : Local feature development & staging preview environment.
                      Deploys to: https://fresh-from-farms-red.vercel.app
-                     Features: Includes "Coming Soon" badges and buttons on all products.
+                     Features: Includes Amazon, Flipkart, Blinkit, and Flipkart Minutes marketplace buy buttons on all products.
    - `main` Branch : Production release branch linked to automated Vercel & Render builds.
                      Deploys to: https://www.freshfromfarms.shop (and https://freshfromfarms.shop)
 
