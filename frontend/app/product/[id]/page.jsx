@@ -1,6 +1,38 @@
 import React from 'react';
 import Link from 'next/link';
 
+// Marketplace SVG Brand Icons (Dev Feature)
+const AmazonIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M3 17.5C8 20.5 16 20.5 21 15.5" stroke="#FF9900" strokeWidth="2.5" strokeLinecap="round"/>
+    <path d="M18.5 15L21.5 16L20.5 13.5" fill="#FF9900" stroke="#FF9900" strokeWidth="1"/>
+    <path d="M7 7H14C16.2 7 18 8.8 18 11C18 13.2 16.2 15 14 15H7V7Z" fill="#FF9900"/>
+  </svg>
+);
+
+const FlipkartIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M5 4H19L21 9H3L5 4Z" fill="#FFE11B"/>
+    <path d="M4 9H20V19C20 20.1 19.1 21 18 21H6C4.9 21 4 20.1 4 19V9Z" fill="#FFE11B"/>
+    <path d="M9 12V16M9 12H13M9 14H12" stroke="#2874F0" strokeWidth="2.2" strokeLinecap="round"/>
+  </svg>
+);
+
+const BlinkitIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="24" height="24" rx="6" fill="#F7C600"/>
+    <path d="M7 5H13.5C15.4 5 17 6.6 17 8.5C17 9.8 16.3 10.9 15.2 11.5C16.6 12.1 17.5 13.4 17.5 15C17.5 16.9 15.9 18.5 14 18.5H7V5Z" fill="#00A651"/>
+  </svg>
+);
+
+const FlipkartMinutesIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="12" cy="13" r="7.5" stroke="#FFE11B" strokeWidth="2"/>
+    <path d="M12 9.5V13L14.5 14.5" stroke="#FFE11B" strokeWidth="2" strokeLinecap="round"/>
+    <path d="M9 3.5H15" stroke="#FFE11B" strokeWidth="2" strokeLinecap="round"/>
+  </svg>
+);
+
 const productsData = {
   'raw-makhana': {
     id: 'raw-makhana',
@@ -288,7 +320,7 @@ export default async function ProductDetailPage({ params }) {
                     textDecoration: 'none'
                   }}
                 >
-                  📦 Amazon
+                  <AmazonIcon /> Amazon
                 </a>
                 <a 
                   href="#flipkart" 
@@ -308,7 +340,7 @@ export default async function ProductDetailPage({ params }) {
                     textDecoration: 'none'
                   }}
                 >
-                  ⚡ Flipkart
+                  <FlipkartIcon /> Flipkart
                 </a>
                 <a 
                   href="#blinkit" 
@@ -328,7 +360,7 @@ export default async function ProductDetailPage({ params }) {
                     textDecoration: 'none'
                   }}
                 >
-                  ⚡ Blinkit
+                  <BlinkitIcon /> Blinkit
                 </a>
                 <a 
                   href="#flipkart-minutes" 
@@ -348,7 +380,7 @@ export default async function ProductDetailPage({ params }) {
                     textDecoration: 'none'
                   }}
                 >
-                  ⏱️ FK Minutes
+                  <FlipkartMinutesIcon /> FK Minutes
                 </a>
               </div>
             </div>
