@@ -3,9 +3,17 @@ const crypto = require('crypto');
 const Stat = require('../models/Stat');
 const Order = require('../models/Order');
 
+const razorpayKeyId = (process.env.RAZORPAY_KEY_ID && !process.env.RAZORPAY_KEY_ID.includes('TDnk2IxhFOao0q'))
+  ? process.env.RAZORPAY_KEY_ID 
+  : 'rzp_test_TLfcrrpSYAfpKX';
+
+const razorpayKeySecret = (process.env.RAZORPAY_KEY_SECRET && !process.env.RAZORPAY_KEY_SECRET.includes('Gf7VRzJTMSau9SmaZNrVH67f'))
+  ? process.env.RAZORPAY_KEY_SECRET 
+  : 'zeoILwMkvwo8wz8P7hSWQafo';
+
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_TLfcrrpSYAfpKX',
-  key_secret: process.env.RAZORPAY_KEY_SECRET || 'zeoILwMkvwo8wz8P7hSWQafo',
+  key_id: razorpayKeyId,
+  key_secret: razorpayKeySecret,
 });
 
 exports.createOrder = async (req, res) => {
@@ -23,7 +31,6 @@ exports.createOrder = async (req, res) => {
     };
 
     const order = await razorpay.orders.create(options);
-    const razorpayKeyId = process.env.RAZORPAY_KEY_ID || 'rzp_test_TLfcrrpSYAfpKX';
     res.json({
       ...order,
       key: razorpayKeyId
