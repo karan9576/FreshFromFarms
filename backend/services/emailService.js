@@ -8,32 +8,41 @@ const sendMailHelper = async (mailOptions) => {
 
   // 1. PRIMARY FOR HOSTINGER PROFESSIONAL EMAIL: Nodemailer SMTP
   if (process.env.SMTP_USER && process.env.SMTP_PASS) {
-    try {
-      const port = parseInt(process.env.SMTP_PORT) || 465;
-      const isSecure = port === 465;
-      
-      const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST || 'smtp.hostinger.com',
-        port,
-        secure: isSecure,
-        auth: {
-          user: process.env.SMTP_USER.trim(),
-          pass: process.env.SMTP_PASS.trim()
-        },
-        connectionTimeout: 10000,
-        greetingTimeout: 10000,
-        socketTimeout: 10000
-      });
+    const configuredPort = parseInt(process.env.SMTP_PORT) || 587;
+    const portsToTry = [
+      { port: configuredPort, secure: configuredPort === 465 },
+      { port: configuredPort === 587 ? 465 : 587, secure: configuredPort !== 587 }
+    ];
 
-      const info = await transporter.sendMail({
-        from: `"${senderName}" <${senderEmail}>`,
-        ...mailOptions
-      });
+    for (const config of portsToTry) {
+      try {
+        const transporter = nodemailer.createTransport({
+          host: process.env.SMTP_HOST || 'smtp.hostinger.com',
+          port: config.port,
+          secure: config.secure,
+          auth: {
+            user: process.env.SMTP_USER.trim(),
+            pass: process.env.SMTP_PASS.trim()
+          },
+          tls: {
+            rejectUnauthorized: false
+          },
+          connectionTimeout: 6000,
+          greetingTimeout: 6000,
+          socketTimeout: 6000
+        });
 
-      console.log(`📧 Email sent via Hostinger SMTP to: ${mailOptions.to} | ID: ${info.messageId}`);
-      emailSent = true;
-    } catch (smtpErr) {
-      console.error('❌ Hostinger SMTP email failed, attempting Brevo fallback... Error:', smtpErr.message);
+        const info = await transporter.sendMail({
+          from: `"${senderName}" <${senderEmail}>`,
+          ...mailOptions
+        });
+
+        console.log(`📧 Email sent via Hostinger SMTP (Port ${config.port}) to: ${mailOptions.to} | ID: ${info.messageId}`);
+        emailSent = true;
+        break;
+      } catch (smtpErr) {
+        console.warn(`⚠️ Hostinger SMTP Port ${config.port} attempt: ${smtpErr.message}`);
+      }
     }
   }
 
