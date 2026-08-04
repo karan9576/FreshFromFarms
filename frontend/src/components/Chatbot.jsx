@@ -82,7 +82,7 @@ export default function Chatbot() {
   ];
 
   return (
-    <div style={{ position: 'fixed', bottom: '30px', right: '30px', zIndex: 9999, fontFamily: "'Inter', -apple-system, sans-serif" }}>
+    <div style={{ position: 'fixed', bottom: '30px', right: '30px', zIndex: 9000, fontFamily: "'Inter', -apple-system, sans-serif" }}>
       {/* Floating Toggle Button */}
       <button 
         onClick={() => setIsOpen(!isOpen)}
