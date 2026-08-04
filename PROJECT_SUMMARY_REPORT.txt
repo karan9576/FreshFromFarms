@@ -251,6 +251,11 @@ API ENDPOINTS & CONTROLLERS (`backend/routes/` & `backend/controllers/`):
    - `dev` Branch  : Local feature development and testing.
    - `main` Branch : Production release branch linked to automated Vercel & Render builds.
 
+2. Dual-Agent Feature Workflow:
+   - Implementation Agent: Executes codebase changes and feature logic on `dev`.
+   - Verification & Testing Agent: Independently tests across Desktop (1920x1080) and 
+     Mobile (375x812) viewports before release.
+
 2. DNS & Custom Domain Records:
    - Apex Domain `freshfromfarms.shop` -> Vercel A Record (`76.76.21.21`).
    - CNAME `www`                        -> `cname.vercel-dns.com`.

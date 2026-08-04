@@ -7,3 +7,8 @@
 ## 2. Release & Branching Strategy Rule
 - **Dual-Branch Pipeline**: All feature development must take place on the `dev` branch.
 - **Production Merge**: Upon user approval, merge changes into `main` to trigger automated Vercel and Render production deployments.
+
+## 3. Dual-Agent Feature Workflow Rule
+- **Implementation Agent**: Whenever a new feature or change is requested, one agent executes the codebase changes on the `dev` branch.
+- **Verification & Testing Agent (Desktop & Mobile)**: A dedicated agent independently tests and verifies the changes across BOTH Desktop (1920x1080) and Mobile (375x812) viewports to confirm UI layout responsiveness, visual excellence, and functionality before completion.
+
