@@ -217,9 +217,14 @@ export default async function ProductDetailPage({ params }) {
 
           {/* Product Details */}
           <div>
-            <span style={{ display: 'inline-block', padding: '6px 14px', background: '#e8f5e9', color: '#2e7d32', borderRadius: '50px', fontSize: '0.85rem', fontWeight: 600, marginBottom: '12px' }}>
-              🌿 100% Organic & Preservative-Free
-            </span>
+            <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginBottom: '12px', flexWrap: 'wrap' }}>
+              <span style={{ display: 'inline-block', padding: '6px 14px', background: '#e8f5e9', color: '#2e7d32', borderRadius: '50px', fontSize: '0.85rem', fontWeight: 600 }}>
+                🌿 100% Organic & Preservative-Free
+              </span>
+              <span style={{ display: 'inline-block', padding: '6px 14px', background: '#fff3e0', color: '#e67e22', borderRadius: '50px', fontSize: '0.85rem', fontWeight: 800 }}>
+                ⏳ Coming Soon
+              </span>
+            </div>
 
             <h1 style={{ fontSize: '2.2rem', fontWeight: 800, color: 'var(--primary-color, #0c3823)', marginBottom: '12px', lineHeight: 1.2 }}>
               {product.name}

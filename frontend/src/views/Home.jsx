@@ -126,7 +126,24 @@ function ProductCard({ product, addToCart, cart = [], updateQuantity }) {
   const currentPrice = pricesObj[selectedWeight] || product?.price || 199;
 
   return (
-    <div className="product-card">
+    <div className="product-card" style={{ position: 'relative' }}>
+      <span style={{ 
+        position: 'absolute', 
+        top: '12px', 
+        right: '12px', 
+        background: '#e67e22', 
+        color: '#ffffff', 
+        fontSize: '0.75rem', 
+        fontWeight: 800, 
+        padding: '4px 10px', 
+        borderRadius: '50px', 
+        letterSpacing: '0.5px', 
+        textTransform: 'uppercase', 
+        zIndex: 2, 
+        boxShadow: '0 4px 12px rgba(230,126,34,0.3)' 
+      }}>
+        ⏳ Coming Soon
+      </span>
       <div className="product-image-container">
         <img src={product.imgUrl} alt={product.name} className="product-package-img" />
       </div>
@@ -149,34 +166,18 @@ function ProductCard({ product, addToCart, cart = [], updateQuantity }) {
 
         <div className="card-footer">
           <span className="price">₹{currentPrice}</span>
-          {(() => {
-            const cartItem = cart.find(item => item.id === product.id && item.weight === selectedWeight);
-            const quantity = cartItem ? cartItem.quantity : 0;
-            if (quantity > 0) {
-              return (
-                <div className="quantity-controls product-qty-adjuster" style={{ margin: 0, padding: '0.2rem', gap: '0.8rem', background: 'var(--primary-color)', color: '#fff', borderRadius: '8px', border: 'none', display: 'flex', alignItems: 'center' }}>
-                  <button 
-                    onClick={() => updateQuantity(product.id, selectedWeight, -1)} 
-                    style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '1.1rem', fontWeight: 800, padding: '0.2rem 0.6rem', cursor: 'pointer' }}
-                  >
-                    -
-                  </button>
-                  <span style={{ fontWeight: 800, minWidth: '15px', textAlign: 'center', fontSize: '0.95rem' }}>{quantity}</span>
-                  <button 
-                    onClick={() => updateQuantity(product.id, selectedWeight, 1)} 
-                    style={{ background: 'transparent', border: 'none', color: '#fff', fontSize: '1.1rem', fontWeight: 800, padding: '0.2rem 0.6rem', cursor: 'pointer' }}
-                  >
-                    +
-                  </button>
-                </div>
-              );
-            }
-            return (
-              <button className="btn-primary" onClick={() => addToCart(product, selectedWeight, currentPrice)}>
-                Add to Cart
-              </button>
-            );
-          })()}
+          <button 
+            className="btn-primary" 
+            disabled 
+            style={{ 
+              background: '#95a5a6', 
+              cursor: 'not-allowed', 
+              opacity: 0.85, 
+              boxShadow: 'none' 
+            }}
+          >
+            Coming Soon
+          </button>
         </div>
       </div>
     </div>
