@@ -32,7 +32,7 @@ export const metadata = {
   },
   icons: {
     icon: '/makhana_favicon.png',
-    shortcut: '/favicon.svg',
+    shortcut: '/makhana_favicon.png',
     apple: '/makhana_favicon.png',
   },
   openGraph: {
