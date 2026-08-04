@@ -2,6 +2,16 @@ const express = require('express');
 const router = express.Router();
 const authController = require('../controllers/authController');
 const { authRateLimiter, publicRateLimiter, authedRateLimiter } = require('../middleware/rateLimiter');
+const {
+  validateRegister,
+  validateLogin,
+  validateVerifyEmail,
+  validateResendCode,
+  validateNewsletter,
+  validateContact,
+  validateChat,
+  validateTrackGuestOrder
+} = require('../middleware/inputValidator');
 
 const isAuthenticated = (req, res, next) => {
   if (req.isAuthenticated() || req.user) return next();
@@ -15,16 +25,16 @@ router.get('/logout', authController.logout);
 router.get('/current_user', authedRateLimiter, authController.getCurrentUser);
 router.get('/my-orders', isAuthenticated, authedRateLimiter, authController.getMyOrders);
 
-// Stricter Auth routes (per-IP + per-account exponential backoff)
-router.post('/register', authRateLimiter, authController.register);
-router.post('/login', authRateLimiter, authController.login);
-router.post('/verify-email', authRateLimiter, authController.verifyEmail);
-router.post('/resend-code', authRateLimiter, authController.resendVerificationCode);
+// Stricter Auth routes with input schema validation
+router.post('/register', authRateLimiter, validateRegister, authController.register);
+router.post('/login', authRateLimiter, validateLogin, authController.login);
+router.post('/verify-email', authRateLimiter, validateVerifyEmail, authController.verifyEmail);
+router.post('/resend-code', authRateLimiter, validateResendCode, authController.resendVerificationCode);
 
-// Moderate Public routes
-router.post('/newsletter', publicRateLimiter, authController.subscribeNewsletter);
-router.post('/contact', publicRateLimiter, authController.submitContactForm);
-router.post('/chat', publicRateLimiter, authController.chatWithAssistant);
-router.post('/track-guest-order', publicRateLimiter, authController.trackGuestOrder);
+// Moderate Public routes with input schema validation
+router.post('/newsletter', publicRateLimiter, validateNewsletter, authController.subscribeNewsletter);
+router.post('/contact', publicRateLimiter, validateContact, authController.submitContactForm);
+router.post('/chat', publicRateLimiter, validateChat, authController.chatWithAssistant);
+router.post('/track-guest-order', publicRateLimiter, validateTrackGuestOrder, authController.trackGuestOrder);
 
 module.exports = router;

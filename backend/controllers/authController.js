@@ -7,6 +7,8 @@ const Order = require('../models/Order');
 const emailService = require('../services/emailService');
 const { resetAuthAttempt } = require('../middleware/rateLimiter');
 
+const JWT_SECRET = process.env.JWT_SECRET || 'freshfromfarms_jwt_secret_secure_key_2026';
+
 exports.googleLogin = passport.authenticate('google', { scope: ['profile', 'email'] });
 
 exports.googleCallback = (req, res, next) => {
@@ -22,7 +24,7 @@ exports.googleCallback = (req, res, next) => {
       // Generate JWT session token for cross-domain mobile clients
       const token = jwt.sign(
         { id: user._id, isAdmin: user.isAdmin },
-        process.env.JWT_SECRET || 'freshfromfarmssecret_key_2026',
+        JWT_SECRET,
         { expiresIn: '30d' }
       );
       
@@ -228,7 +230,7 @@ exports.login = async (req, res) => {
     // Sign JWT
     const token = jwt.sign(
       { id: user._id, isAdmin: user.isAdmin },
-      process.env.JWT_SECRET || 'freshfromfarmssecret_key_2026',
+      JWT_SECRET,
       { expiresIn: '30d' }
     );
 
@@ -309,7 +311,7 @@ exports.verifyEmail = async (req, res) => {
     // Generate JWT
     const token = jwt.sign(
       { id: user._id, isAdmin: user.isAdmin },
-      process.env.JWT_SECRET || 'freshfromfarmssecret_key_2026',
+      JWT_SECRET,
       { expiresIn: '30d' }
     );
 
