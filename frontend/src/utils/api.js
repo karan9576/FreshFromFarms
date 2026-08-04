@@ -5,7 +5,7 @@ export const getApiUrl = () => {
   }
   
   if (typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-    return 'https://freshfromfarms-ly62.onrender.com/api';
+    return 'https://api.freshfromfarms.shop/api';
   }
   
   return 'http://localhost:5000/api';

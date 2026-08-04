@@ -3,7 +3,7 @@ import '../src/App.css';
 import AppShell from '../src/components/AppShell';
 
 export const metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://freshfromfarms.com'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://freshfromfarms.shop'),
   title: {
     default: 'FreshFromFarms | Premium Organic Makhana & Water Lily Seeds',
     template: '%s | FreshFromFarms'
@@ -38,7 +38,7 @@ export const metadata = {
   openGraph: {
     title: 'FreshFromFarms | Premium Organic Makhana & Water Lily Seeds',
     description: '100% Natural, Water-cultivated organic Makhana (Foxnuts) direct from Bihar water farms. Preservative-free roasted superfood.',
-    url: 'https://freshfromfarms.com',
+    url: 'https://freshfromfarms.shop',
     siteName: 'FreshFromFarms',
     images: [
       {
@@ -69,7 +69,7 @@ export const metadata = {
     },
   },
   alternates: {
-    canonical: 'https://freshfromfarms.com',
+    canonical: 'https://freshfromfarms.shop',
   },
 };
 
