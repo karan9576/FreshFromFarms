@@ -36,14 +36,18 @@ exports.createOrder = async (req, res) => {
     };
 
     const { instance, keyId } = getRazorpayInstance();
+    console.log('[createOrder] Using Razorpay keyId:', keyId);
     const order = await instance.orders.create(options);
     res.json({
       ...order,
       key: keyId
     });
   } catch (error) {
-    console.error('Error creating Razorpay order:', error);
-    res.status(500).json({ message: error?.error?.description || error?.message || 'Error creating razorpay order' });
+    console.error('Error creating Razorpay order:', JSON.stringify(error, Object.getOwnPropertyNames(error), 2));
+    res.status(500).json({ 
+      message: error?.error?.description || error?.message || 'Error creating razorpay order',
+      debug_key_used: (() => { try { return getRazorpayInstance().keyId; } catch(e) { return 'unknown'; } })()
+    });
   }
 };
 

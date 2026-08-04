@@ -144,11 +144,15 @@ app.get('/test-email', async (req, res, next) => {
 });
 
 app.get('/diag', (req, res) => {
+  const rawKey = process.env.RAZORPAY_KEY_ID || '(not set)';
   res.json({
     FRONTEND_URL: process.env.FRONTEND_URL,
     NODE_ENV: process.env.NODE_ENV,
     PORT: process.env.PORT,
-    JWT_SECRET_DEFINED: !!process.env.JWT_SECRET
+    JWT_SECRET_DEFINED: !!process.env.JWT_SECRET,
+    RAZORPAY_KEY_ID_RAW: rawKey,
+    RAZORPAY_KEY_ID_LENGTH: rawKey.length,
+    RAZORPAY_KEY_OVERRIDE_ACTIVE: rawKey.includes('TDnk2IxhFOao0q')
   });
 });
 
