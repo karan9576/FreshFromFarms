@@ -248,8 +248,10 @@ API ENDPOINTS & CONTROLLERS (`backend/routes/` & `backend/controllers/`):
 ================================================================================
 
 1. Dual-Branch Git Workflow:
-   - `dev` Branch  : Local feature development and testing.
+   - `dev` Branch  : Local feature development & staging environment.
+                     Deploys to: https://fresh-from-farms-red.vercel.app
    - `main` Branch : Production release branch linked to automated Vercel & Render builds.
+                     Deploys to: https://www.freshfromfarms.shop (and https://freshfromfarms.shop)
 
 2. Dual-Agent Feature Workflow:
    - Implementation Agent: Executes codebase changes and feature logic on `dev`.

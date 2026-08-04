@@ -6,7 +6,8 @@
 
 ## 2. Release & Branching Strategy Rule
 - **Dual-Branch Pipeline**: All feature development must take place on the `dev` branch.
-- **Production Merge**: Upon user approval, merge changes into `main` to trigger automated Vercel and Render production deployments.
+- **Staging Preview Deployment**: Pushing to the `dev` branch deploys preview changes directly to `https://fresh-from-farms-red.vercel.app`.
+- **Production Merge**: Upon user approval, merge changes into `main` to trigger automated production deployment to `https://www.freshfromfarms.shop` (and `https://freshfromfarms.shop`).
 
 ## 3. Dual-Agent Feature Workflow Rule
 - **Implementation Agent**: Whenever a new feature or change is requested, one agent executes the codebase changes on the `dev` branch.
