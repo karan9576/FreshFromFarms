@@ -53,7 +53,7 @@ export default function AppShell({ children }) {
   const [pincodeLoading, setPincodeLoading] = useState(false);
 
   const apiURL = getApiUrl();
-  const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'test_razorpay_key';
+  const razorpayKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_TLfcrrpSYAfpKX';
 
   // Autofill email when user state changes
   useEffect(() => {
@@ -211,7 +211,7 @@ export default function AppShell({ children }) {
       
       // Clean Razorpay options (order_id automatically provides amount & currency on Razorpay servers)
       const options = {
-        key: order.key || razorpayKey || 'rzp_test_TDnk2IxhFOao0q',
+        key: order.key || razorpayKey || 'rzp_test_TLfcrrpSYAfpKX',
         order_id: order.id,
         name: 'FreshFromFarms',
         description: 'Roasted Organic Makhana Superfood Order',
