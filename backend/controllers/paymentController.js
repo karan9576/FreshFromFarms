@@ -49,6 +49,7 @@ exports.createOrder = async (req, res) => {
 
 exports.verifyPayment = async (req, res) => {
   try {
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, cartItems, shippingInfo } = req.body;
     const { instance, keySecret } = getRazorpayInstance();
     const sign = razorpay_order_id + '|' + razorpay_payment_id;
     const expectedSign = crypto

@@ -278,6 +278,7 @@ export default function AppShell({ children }) {
         }
       };
 
+      setCheckoutStep('idle');
       const rzp = new window.Razorpay(options);
       rzp.open();
 
