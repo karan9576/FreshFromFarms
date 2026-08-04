@@ -1,14 +1,26 @@
 import HomeClientWrapper from '../src/components/HomeClientWrapper';
 
 export const metadata = {
-  title: 'FreshFromFarms | Premium Organic Makhana & Water Lily Seeds',
-  description: 'Shop 100% natural, water-cultivated organic Makhana (Indian Fox Nuts / Lotus Seeds) direct from pristine farms of Bihar. Preservative-free, GI-tagged, oil-free roasted superfood.',
+  title: 'FreshFromFarms | Buy Organic Makhana & Healthy Snacks Online',
+  description: 'Buy 100% natural, oil-free roasted organic Makhana (Indian Fox Nuts) online direct from Bihar. Shop healthy breakfast snacks, lotus seeds, and superfoods at FreshFromFarms.',
+  keywords: [
+    'buy makhana',
+    'buy makhana online',
+    'freshfromfarms',
+    'buy healthy',
+    'buy healthy breakfast',
+    'buy snacks',
+    'buy healthy snacks',
+    'organic makhana online',
+    'foxnuts online',
+    'water lily seeds'
+  ],
   alternates: {
     canonical: 'https://freshfromfarms.shop',
   },
   openGraph: {
-    title: 'FreshFromFarms | Premium Organic Makhana',
-    description: 'Shop 100% natural, water-cultivated organic Makhana (Indian Fox Nuts) direct from pristine farms of Bihar.',
+    title: 'FreshFromFarms | Buy Organic Makhana & Healthy Snacks Online',
+    description: 'Buy 100% natural, oil-free roasted organic Makhana (Indian Fox Nuts) online direct from Bihar. Shop healthy breakfast snacks at FreshFromFarms.',
     url: 'https://freshfromfarms.shop',
     siteName: 'FreshFromFarms',
     images: [{ url: '/hero_image.png', width: 1200, height: 630, alt: 'FreshFromFarms Makhana Range' }],
