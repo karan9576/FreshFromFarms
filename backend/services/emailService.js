@@ -3,7 +3,7 @@ const nodemailer = require('nodemailer');
 
 const sendMailHelper = async (mailOptions) => {
   let emailSent = false;
-  const senderEmail = process.env.SENDER_EMAIL || process.env.SMTP_USER || 'care.freshfromfarms@gmail.com';
+  const senderEmail = process.env.SENDER_EMAIL || process.env.SMTP_USER || 'care@freshfromfarms.shop';
   const senderName = process.env.SENDER_NAME || 'FreshFromFarms';
 
   // 1. PRIMARY FOR HOSTINGER PROFESSIONAL EMAIL: Nodemailer SMTP
@@ -211,9 +211,9 @@ exports.sendOrderConfirmationEmail = async (order) => {
 };
 
 exports.sendAdminNewOrderNotification = async (order) => {
-  let adminEmails = process.env.ADMIN_EMAIL || 'care.freshfromfarms@gmail.com';
-  if (adminEmails && !adminEmails.toLowerCase().includes('care.freshfromfarms@gmail.com')) {
-    adminEmails = `${adminEmails}, care.freshfromfarms@gmail.com`;
+  let adminEmails = process.env.ADMIN_EMAIL || 'care@freshfromfarms.shop';
+  if (adminEmails && !adminEmails.toLowerCase().includes('care@freshfromfarms.shop')) {
+    adminEmails = `${adminEmails}, care@freshfromfarms.shop`;
   }
 
   const adminDashboardUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/admin`;
@@ -374,7 +374,7 @@ exports.sendNewsletterSignupEmail = async (userEmail) => {
 
 exports.sendContactFormEmail = async (name, email, phone, message) => {
   const mailOptions = {
-    to: 'care.freshfromfarms@gmail.com',
+    to: process.env.ADMIN_EMAIL ? process.env.ADMIN_EMAIL.split(',')[0].trim() : 'care@freshfromfarms.shop',
     subject: `New Contact Form Query from ${name} 🔑`,
     html: `
       <div style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #f7f9f7; padding: 30px; border-radius: 12px; max-width: 600px; margin: 0 auto; border: 1px solid #e0eae0;">
