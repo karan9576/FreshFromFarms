@@ -88,7 +88,7 @@ exports.sendSignupEmail = async (userEmail, displayName) => {
   
   const mailOptions = {
     to: userEmail,
-    subject: 'Welcome to FreshFromFarms! 🍿',
+    subject: `Account Registration Confirmation - ${displayName}`,
     html: `
       <div style="font-family: 'Segoe UI', Arial, sans-serif; background-color: #f7f9f7; padding: 30px; border-radius: 12px; max-width: 600px; margin: 0 auto; border: 1px solid #e0eae0;">
         <!-- Header -->
