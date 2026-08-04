@@ -106,18 +106,47 @@ export default function AppShell({ children }) {
     checkAuthStatus();
   }, [apiURL]);
 
+  // Load cart from localStorage on mount
+  useEffect(() => {
+    try {
+      const savedCart = localStorage.getItem('fff_cart');
+      if (savedCart) {
+        const parsed = JSON.parse(savedCart);
+        if (Array.isArray(parsed)) setCart(parsed);
+      }
+    } catch (e) {
+      console.warn('Failed to load cart from localStorage:', e);
+    }
+  }, []);
+
+  // Save cart to localStorage whenever cart changes
+  useEffect(() => {
+    try {
+      localStorage.setItem('fff_cart', JSON.stringify(cart));
+    } catch (e) {
+      console.warn('Failed to save cart to localStorage:', e);
+    }
+  }, [cart]);
+
   const addToCart = (product, weight, price) => {
+    if (!product) return;
+    const finalPrice = typeof price === 'number' && !isNaN(price) ? price : (product.price || 199);
+    const finalWeight = weight || '100g';
+
     setCart(prevCart => {
-      const existingItem = prevCart.find(item => item.id === product.id && item.weight === weight);
+      const existingItem = prevCart.find(item => item.id === product.id && item.weight === finalWeight);
       if (existingItem) {
         return prevCart.map(item => 
-          item.id === product.id && item.weight === weight 
-            ? { ...item, quantity: item.quantity + 1 }
+          item.id === product.id && item.weight === finalWeight 
+            ? { ...item, quantity: item.quantity + 1, price: finalPrice }
             : item
         );
       }
-      return [...prevCart, { ...product, weight, price, quantity: 1 }];
+      return [...prevCart, { ...product, weight: finalWeight, price: finalPrice, quantity: 1 }];
     });
+
+    // Automatically slide open the side cart drawer when an item is added
+    setIsCartOpen(true);
   };
 
   const updateQuantity = (id, weight, delta) => {

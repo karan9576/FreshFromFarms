@@ -120,9 +120,10 @@ const makeImageTransparent = (imgUrl) => {
 
 // Sub-component for Product Card to manage individual selected weights
 function ProductCard({ product, addToCart, cart = [], updateQuantity }) {
-  const [selectedWeight, setSelectedWeight] = useState('100g'); // Default selected weight
-  const currentPrice = product.prices[selectedWeight];
-
+  const pricesObj = product?.prices || { '100g': product?.price || 199 };
+  const availableWeights = Object.keys(pricesObj);
+  const [selectedWeight, setSelectedWeight] = useState(availableWeights.includes('100g') ? '100g' : availableWeights[0] || '100g');
+  const currentPrice = pricesObj[selectedWeight] || product?.price || 199;
 
   return (
     <div className="product-card">
@@ -133,9 +134,9 @@ function ProductCard({ product, addToCart, cart = [], updateQuantity }) {
         <h3>{product.name}</h3>
         <p>{product.desc}</p>
         
-        {/* Size/Weight Selector pills (Ref 2) */}
+        {/* Size/Weight Selector pills */}
         <div className="weight-selector">
-          {Object.keys(product.prices).map(weight => (
+          {availableWeights.map(weight => (
             <button 
               key={weight} 
               className={`weight-pill ${selectedWeight === weight ? 'active' : ''}`}
