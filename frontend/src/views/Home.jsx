@@ -179,6 +179,99 @@ function ProductCard({ product, addToCart, cart = [], updateQuantity }) {
             Coming Soon
           </button>
         </div>
+
+        {/* Marketplace Buy Options (Dev Feature) */}
+        <div style={{ marginTop: '14px', paddingTop: '12px', borderTop: '1px dashed rgba(0,0,0,0.1)' }}>
+          <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#777', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '8px' }}>
+            🛒 Buy On Fast Delivery Apps:
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+            <a 
+              href={product.links?.amazon || '#amazon'} 
+              target="_blank" 
+              rel="noreferrer"
+              style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justify: 'center', 
+                gap: '6px', 
+                padding: '6px 8px', 
+                background: '#232F3E', 
+                color: '#FF9900', 
+                borderRadius: '6px', 
+                fontSize: '0.75rem', 
+                fontWeight: 700, 
+                textDecoration: 'none',
+                transition: 'transform 0.2s ease'
+              }}
+            >
+              📦 Amazon
+            </a>
+            <a 
+              href={product.links?.flipkart || '#flipkart'} 
+              target="_blank" 
+              rel="noreferrer"
+              style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justify: 'center', 
+                gap: '6px', 
+                padding: '6px 8px', 
+                background: '#2874F0', 
+                color: '#FFE11B', 
+                borderRadius: '6px', 
+                fontSize: '0.75rem', 
+                fontWeight: 700, 
+                textDecoration: 'none',
+                transition: 'transform 0.2s ease'
+              }}
+            >
+              ⚡ Flipkart
+            </a>
+            <a 
+              href={product.links?.blinkit || '#blinkit'} 
+              target="_blank" 
+              rel="noreferrer"
+              style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justify: 'center', 
+                gap: '6px', 
+                padding: '6px 8px', 
+                background: '#F7C600', 
+                color: '#111111', 
+                borderRadius: '6px', 
+                fontSize: '0.75rem', 
+                fontWeight: 800, 
+                textDecoration: 'none',
+                transition: 'transform 0.2s ease'
+              }}
+            >
+              ⚡ Blinkit
+            </a>
+            <a 
+              href={product.links?.flipkartMinutes || '#flipkart-minutes'} 
+              target="_blank" 
+              rel="noreferrer"
+              style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justify: 'center', 
+                gap: '6px', 
+                padding: '6px 8px', 
+                background: '#4F1A87', 
+                color: '#FFE11B', 
+                borderRadius: '6px', 
+                fontSize: '0.75rem', 
+                fontWeight: 700, 
+                textDecoration: 'none',
+                transition: 'transform 0.2s ease'
+              }}
+            >
+              ⏱️ FK Minutes
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   );

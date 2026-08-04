@@ -258,10 +258,99 @@ export default async function ProductDetailPage({ params }) {
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', marginBottom: '24px' }}>
               <Link href="/" style={{ flex: 1, minWidth: '200px', textAlign: 'center', padding: '16px 28px', background: 'var(--primary-color, #0c3823)', color: '#fff', borderRadius: '12px', fontWeight: 700, fontSize: '1.1rem', textDecoration: 'none', boxShadow: '0 8px 20px rgba(12,56,35,0.25)' }}>
                 Shop Full Collection
               </Link>
+            </div>
+
+            {/* Marketplace Buy Options (Dev Feature) */}
+            <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px dashed rgba(0,0,0,0.15)' }}>
+              <h4 style={{ fontSize: '0.9rem', fontWeight: 800, color: '#444', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '12px' }}>
+                🛒 Also Available On Fast Delivery Apps:
+              </h4>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '10px' }}>
+                <a 
+                  href="#amazon" 
+                  target="_blank" 
+                  rel="noreferrer"
+                  style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justify: 'center', 
+                    gap: '8px', 
+                    padding: '10px 14px', 
+                    background: '#232F3E', 
+                    color: '#FF9900', 
+                    borderRadius: '8px', 
+                    fontSize: '0.85rem', 
+                    fontWeight: 700, 
+                    textDecoration: 'none'
+                  }}
+                >
+                  📦 Amazon
+                </a>
+                <a 
+                  href="#flipkart" 
+                  target="_blank" 
+                  rel="noreferrer"
+                  style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justify: 'center', 
+                    gap: '8px', 
+                    padding: '10px 14px', 
+                    background: '#2874F0', 
+                    color: '#FFE11B', 
+                    borderRadius: '8px', 
+                    fontSize: '0.85rem', 
+                    fontWeight: 700, 
+                    textDecoration: 'none'
+                  }}
+                >
+                  ⚡ Flipkart
+                </a>
+                <a 
+                  href="#blinkit" 
+                  target="_blank" 
+                  rel="noreferrer"
+                  style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justify: 'center', 
+                    gap: '8px', 
+                    padding: '10px 14px', 
+                    background: '#F7C600', 
+                    color: '#111111', 
+                    borderRadius: '8px', 
+                    fontSize: '0.85rem', 
+                    fontWeight: 800, 
+                    textDecoration: 'none'
+                  }}
+                >
+                  ⚡ Blinkit
+                </a>
+                <a 
+                  href="#flipkart-minutes" 
+                  target="_blank" 
+                  rel="noreferrer"
+                  style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justify: 'center', 
+                    gap: '8px', 
+                    padding: '10px 14px', 
+                    background: '#4F1A87', 
+                    color: '#FFE11B', 
+                    borderRadius: '8px', 
+                    fontSize: '0.85rem', 
+                    fontWeight: 700, 
+                    textDecoration: 'none'
+                  }}
+                >
+                  ⏱️ FK Minutes
+                </a>
+              </div>
             </div>
           </div>
         </div>
