@@ -3,18 +3,23 @@ const crypto = require('crypto');
 const Stat = require('../models/Stat');
 const Order = require('../models/Order');
 
-const razorpayKeyId = (process.env.RAZORPAY_KEY_ID && !process.env.RAZORPAY_KEY_ID.includes('TDnk2IxhFOao0q'))
-  ? process.env.RAZORPAY_KEY_ID 
-  : 'rzp_test_TLfcrrpSYAfpKX';
+const getRazorpayInstance = () => {
+  let keyId = process.env.RAZORPAY_KEY_ID ? process.env.RAZORPAY_KEY_ID.trim() : '';
+  let keySecret = process.env.RAZORPAY_KEY_SECRET ? process.env.RAZORPAY_KEY_SECRET.trim() : '';
 
-const razorpayKeySecret = (process.env.RAZORPAY_KEY_SECRET && !process.env.RAZORPAY_KEY_SECRET.includes('Gf7VRzJTMSau9SmaZNrVH67f'))
-  ? process.env.RAZORPAY_KEY_SECRET 
-  : 'zeoILwMkvwo8wz8P7hSWQafo';
+  if (!keyId || keyId.includes('TDnk2IxhFOao0q') || keyId.length < 10) {
+    keyId = 'rzp_test_TLfcrrpSYAfpKX';
+  }
+  if (!keySecret || keySecret.includes('Gf7VRzJTMSau9SmaZNrVH67f') || keySecret.length < 10) {
+    keySecret = 'zeoILwMkvwo8wz8P7hSWQafo';
+  }
 
-const razorpay = new Razorpay({
-  key_id: razorpayKeyId,
-  key_secret: razorpayKeySecret,
-});
+  return {
+    instance: new Razorpay({ key_id: keyId, key_secret: keySecret }),
+    keyId,
+    keySecret
+  };
+};
 
 exports.createOrder = async (req, res) => {
   try {
@@ -30,10 +35,11 @@ exports.createOrder = async (req, res) => {
       receipt: `receipt_${Date.now()}`
     };
 
-    const order = await razorpay.orders.create(options);
+    const { instance, keyId } = getRazorpayInstance();
+    const order = await instance.orders.create(options);
     res.json({
       ...order,
-      key: razorpayKeyId
+      key: keyId
     });
   } catch (error) {
     console.error('Error creating Razorpay order:', error);
@@ -43,17 +49,16 @@ exports.createOrder = async (req, res) => {
 
 exports.verifyPayment = async (req, res) => {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, cartItems, shippingInfo } = req.body;
-    
+    const { instance, keySecret } = getRazorpayInstance();
     const sign = razorpay_order_id + '|' + razorpay_payment_id;
     const expectedSign = crypto
-      .createHmac('sha256', process.env.RAZORPAY_KEY_SECRET)
+      .createHmac('sha256', keySecret)
       .update(sign.toString())
       .digest('hex');
 
     if (razorpay_signature === expectedSign) {
       // 1. Fetch order details to get transaction amount (converted to INR)
-      const orderDetails = await razorpay.orders.fetch(razorpay_order_id);
+      const orderDetails = await instance.orders.fetch(razorpay_order_id);
       const amountInRupees = (orderDetails.amount || 0) / 100;
 
       // 2. Increment database daily stats revenue field
