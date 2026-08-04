@@ -215,6 +215,7 @@ API ENDPOINTS & CONTROLLERS (`backend/routes/` & `backend/controllers/`):
      and social share preview images (`/hero_image.png`).
    - Targeted High-Intent Keywords: `buy makhana`, `buy makhana online`, `freshfromfarms`, 
      `buy healthy`, `buy healthy breakfast`, `buy snacks`, `buy healthy snacks`.
+   - Verified Google Search Console HTML File: `https://freshfromfarms.shop/googleaaa2a88a8a24932c.html`
 
 5. Global Error Masking (`server.js`):
    - Catches unhandled server exceptions and returns clean sanitized error messages, 
