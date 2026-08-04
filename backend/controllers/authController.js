@@ -5,6 +5,7 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const Order = require('../models/Order');
 const emailService = require('../services/emailService');
+const { resetAuthAttempt } = require('../middleware/rateLimiter');
 
 exports.googleLogin = passport.authenticate('google', { scope: ['profile', 'email'] });
 
@@ -231,6 +232,9 @@ exports.login = async (req, res) => {
       { expiresIn: '30d' }
     );
 
+    // Reset rate limiter failed attempt count on successful login
+    resetAuthAttempt(req, user.email);
+
     res.json({
       token,
       user: {
@@ -308,6 +312,9 @@ exports.verifyEmail = async (req, res) => {
       process.env.JWT_SECRET || 'freshfromfarmssecret_key_2026',
       { expiresIn: '30d' }
     );
+
+    // Reset rate limiter failed attempt count on successful verification
+    resetAuthAttempt(req, user.email);
 
     res.json({
       token,

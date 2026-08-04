@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/adminController');
+const { authedRateLimiter } = require('../middleware/rateLimiter');
 
 // Middleware to check if admin
 const isAdmin = (req, res, next) => {
@@ -11,6 +12,7 @@ const isAdmin = (req, res, next) => {
 };
 
 router.use(isAdmin);
+router.use(authedRateLimiter);
 
 router.get('/stats', adminController.getStats);
 router.post('/products', adminController.addProduct);
