@@ -214,7 +214,12 @@ API ENDPOINTS & CONTROLLERS (`backend/routes/` & `backend/controllers/`):
    - Customized meta titles, meta descriptions, canonical URLs (`https://freshfromfarms.shop`), 
      and social share preview images (`/hero_image.png`).
    - Targeted High-Intent Keywords: `buy makhana`, `buy makhana online`, `freshfromfarms`, 
-     `buy healthy`, `buy healthy breakfast`, `buy snacks`, `buy healthy snacks`.
+     `freshfromfarms shop`, `organic makhana`, `buy healthy`, `buy healthy breakfast`, 
+     `buy snacks`, `buy healthy snacks`, `foxnuts online`, `water lily seeds buy online`, 
+     `phool makhana online`, `raw makhana online`, `salted makhana online`, `himalayan pink salt makhana`, 
+     `peri peri makhana`, `pudina makhana`, `cheese makhana`, `oil free roasted snacks`, 
+     `low calorie snacks online`, `high protein snacks india`, `vrat snacks online`, `fasting food makhana`, 
+     `makhana 250g price`, `makhana 500g price`, `makhana 1kg price`, `best makhana brand in india`.
    - Verified Google Search Console HTML File: `https://freshfromfarms.shop/googleaaa2a88a8a24932c.html`
 
 5. Global Error Masking (`server.js`):
