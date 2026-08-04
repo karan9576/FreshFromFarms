@@ -231,7 +231,7 @@ function App() {
         },
         prefill: {
           name: 'Healthy Snacker',
-          email: 'snack@freshfromfarms.com',
+          email: 'care@freshfromfarms.shop',
           contact: '9999999999'
         },
         theme: {

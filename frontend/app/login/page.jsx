@@ -5,7 +5,7 @@ export const metadata = {
   title: 'Sign In / Register | FreshFromFarms',
   description: 'Log in or sign up to your FreshFromFarms account to track orders, manage addresses, and access exclusive organic Makhana harvest offers.',
   alternates: {
-    canonical: 'https://freshfromfarms.com/login',
+    canonical: 'https://freshfromfarms.shop/login',
   }
 };
 

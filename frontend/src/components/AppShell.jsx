@@ -270,7 +270,7 @@ export default function AppShell({ children }) {
         },
         prefill: {
           name: user ? user.name : 'Healthy Snacker',
-          email: email || (user ? user.email : 'snack@freshfromfarms.com'),
+          email: email || (user ? user.email : 'care@freshfromfarms.shop'),
           contact: phone || '9999999999'
         },
         theme: {

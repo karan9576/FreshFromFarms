@@ -77,7 +77,7 @@ exports.verifyPayment = async (req, res) => {
       // 3. Save verified Order record in database
       const newOrder = await Order.create({
         user: req.user ? req.user._id : null,
-        email: shippingInfo?.email || (req.user ? req.user.email : 'anonymous@freshfromfarms.com'),
+        email: shippingInfo?.email || (req.user ? req.user.email : 'anonymous@freshfromfarms.shop'),
         phone: shippingInfo?.phone || '9999999999',
         addressLine1: shippingInfo?.addressLine1 || 'Default Address Line 1',
         addressLine2: shippingInfo?.addressLine2 || '',
@@ -125,7 +125,7 @@ exports.createCodOrder = async (req, res) => {
     // Save COD Order record in database
     const newOrder = await Order.create({
       user: req.user ? req.user._id : null,
-      email: shippingInfo?.email || (req.user ? req.user.email : 'anonymous@freshfromfarms.com'),
+      email: shippingInfo?.email || (req.user ? req.user.email : 'anonymous@freshfromfarms.shop'),
       phone: shippingInfo?.phone || '9999999999',
       addressLine1: shippingInfo?.addressLine1 || 'Default Address Line 1',
       addressLine2: shippingInfo?.addressLine2 || '',

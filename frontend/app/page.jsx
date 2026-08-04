@@ -4,12 +4,12 @@ export const metadata = {
   title: 'FreshFromFarms | Premium Organic Makhana & Water Lily Seeds',
   description: 'Shop 100% natural, water-cultivated organic Makhana (Indian Fox Nuts / Lotus Seeds) direct from pristine farms of Bihar. Preservative-free, GI-tagged, oil-free roasted superfood.',
   alternates: {
-    canonical: 'https://freshfromfarms.com',
+    canonical: 'https://freshfromfarms.shop',
   },
   openGraph: {
     title: 'FreshFromFarms | Premium Organic Makhana',
     description: 'Shop 100% natural, water-cultivated organic Makhana (Indian Fox Nuts) direct from pristine farms of Bihar.',
-    url: 'https://freshfromfarms.com',
+    url: 'https://freshfromfarms.shop',
     siteName: 'FreshFromFarms',
     images: [{ url: '/hero_image.png', width: 1200, height: 630, alt: 'FreshFromFarms Makhana Range' }],
   }
@@ -21,13 +21,13 @@ export default function HomePage() {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'FreshFromFarms',
-    url: 'https://freshfromfarms.com',
-    logo: 'https://freshfromfarms.com/makhana_favicon.png',
+    url: 'https://freshfromfarms.shop',
+    logo: 'https://freshfromfarms.shop/makhana_favicon.png',
     contactPoint: {
       '@type': 'ContactPoint',
       telephone: '+91-9870415174',
       contactType: 'customer service',
-      email: 'care.freshfromfarms@gmail.com',
+      email: 'care@freshfromfarms.shop',
       availableLanguage: ['English', 'Hindi']
     }
   };
@@ -37,10 +37,10 @@ export default function HomePage() {
     '@type': 'Product',
     name: 'FreshFromFarms Organic Makhana (Fox Nuts)',
     image: [
-      'https://freshfromfarms.com/hero_image.png',
-      'https://freshfromfarms.com/raw.png',
-      'https://freshfromfarms.com/salted.png',
-      'https://freshfromfarms.com/periperi.png'
+      'https://freshfromfarms.shop/hero_image.png',
+      'https://freshfromfarms.shop/raw.png',
+      'https://freshfromfarms.shop/salted.png',
+      'https://freshfromfarms.shop/periperi.png'
     ],
     description: 'Handpicked, water-cultivated organic lotus seeds roasted oil-free in Bihar, India. Preservative-free healthy snacking.',
     brand: {
@@ -66,10 +66,10 @@ export default function HomePage() {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'FreshFromFarms',
-    url: 'https://freshfromfarms.com',
+    url: 'https://freshfromfarms.shop',
     potentialAction: {
       '@type': 'SearchAction',
-      target: 'https://freshfromfarms.com/#shop',
+      target: 'https://freshfromfarms.shop/#shop',
       'query-input': 'required name=search_term_string'
     }
   };
