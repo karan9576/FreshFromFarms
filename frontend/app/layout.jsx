@@ -79,6 +79,45 @@ export const viewport = {
   initialScale: 1,
 };
 
+const faqJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: [
+    {
+      '@type': 'Question',
+      name: 'What is Makhana (Foxnuts / Water Lily Seeds)?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Makhana (Foxnuts) are edible puffed seeds of the Euryale ferox water lily plant, cultivated natively in pristine water ponds across Bihar, India. They are rich in protein, fiber, calcium, and antioxidants with a low glycemic index.'
+      }
+    },
+    {
+      '@type': 'Question',
+      name: 'Why buy organic Makhana directly from FreshFromFarms?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'FreshFromFarms sources 100% natural, GI-tagged water-cultivated Makhana directly from Bihar water farms. Our products are roasted oil-free, 100% preservative-free, and quality-tested for maximum crispness and safety.'
+      }
+    },
+    {
+      '@type': 'Question',
+      name: 'Are FreshFromFarms Makhana products FSSAI certified?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'Yes, FreshFromFarms operates under strict FSSAI food safety regulations (FSSAI Licence No: 20426121001137) and GST compliance (GSTIN: 10ACJFA8885A1ZL).'
+      }
+    },
+    {
+      '@type': 'Question',
+      name: 'What are the delivery times and shipping fees?',
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: 'FreshFromFarms offers FREE Shipping across India on all orders above ₹499. Standard delivery takes 2 to 5 business days depending on location.'
+      }
+    }
+  ]
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
@@ -86,6 +125,10 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
       </head>
       <body>
         <AppShell>
