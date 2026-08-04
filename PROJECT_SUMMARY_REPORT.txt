@@ -210,10 +210,11 @@ API ENDPOINTS & CONTROLLERS (`backend/routes/` & `backend/controllers/`):
    - Enforces maximum file size limit of 5MB.
    - Sanitizes uploaded file names to prevent path traversal attacks.
 
-4. Express CORS Whitelist:
-   - Restricts API access to authorized domains:
-     `https://freshfromfarms.shop`, `https://www.freshfromfarms.shop`, 
-     `https://fresh-from-farms-red.vercel.app`, and local dev ports.
+4. Canonical & OpenGraph Metadata:
+   - Customized meta titles, meta descriptions, canonical URLs (`https://freshfromfarms.shop`), 
+     and social share preview images (`/hero_image.png`).
+   - Targeted High-Intent Keywords: `buy makhana`, `buy makhana online`, `freshfromfarms`, 
+     `buy healthy`, `buy healthy breakfast`, `buy snacks`, `buy healthy snacks`.
 
 5. Global Error Masking (`server.js`):
    - Catches unhandled server exceptions and returns clean sanitized error messages, 
