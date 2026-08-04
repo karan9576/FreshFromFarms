@@ -24,6 +24,9 @@ export const metadata = {
     url: 'https://freshfromfarms.shop',
     siteName: 'FreshFromFarms',
     images: [{ url: '/hero_image.png', width: 1200, height: 630, alt: 'FreshFromFarms Makhana Range' }],
+  },
+  verification: {
+    google: 'googleaaa2a88a8a24932c'
   }
 };
 
