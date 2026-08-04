@@ -5,8 +5,40 @@ const sendMailHelper = async (mailOptions) => {
   let emailSent = false;
   const senderEmail = process.env.SENDER_EMAIL || process.env.SMTP_USER || 'care@freshfromfarms.shop';
   const senderName = process.env.SENDER_NAME || 'FreshFromFarms';
+  const cleanApiKey = process.env.BREVO_API_KEY ? process.env.BREVO_API_KEY.trim() : null;
 
-  // 1. PRIMARY FOR HOSTINGER PROFESSIONAL EMAIL: Nodemailer SMTP
+  // 1. PRIMARY FOR CLOUD SERVERS (Render/Vercel): Brevo HTTPS REST API (Port 443 - Instant <200ms Delivery)
+  if (cleanApiKey) {
+    try {
+      await axios.post(
+        'https://api.brevo.com/v3/smtp/email',
+        {
+          sender: {
+            name: senderName,
+            email: senderEmail
+          },
+          to: [{ email: mailOptions.to }],
+          subject: mailOptions.subject,
+          htmlContent: mailOptions.html
+        },
+        {
+          headers: {
+            'api-key': cleanApiKey,
+            'Content-Type': 'application/json'
+          },
+          timeout: 8000
+        }
+      );
+      console.log(`⚡ Email sent instantly via Brevo API to: ${mailOptions.to}`);
+      emailSent = true;
+    } catch (brevoErr) {
+      console.warn('⚠️ Brevo API send attempt failed, trying Nodemailer SMTP fallback... Error:', brevoErr.response?.data || brevoErr.message);
+    }
+  }
+
+  if (emailSent) return;
+
+  // 2. SECONDARY FALLBACK: Nodemailer Hostinger SMTP
   if (process.env.SMTP_USER && process.env.SMTP_PASS) {
     const configuredPort = parseInt(process.env.SMTP_PORT) || 587;
     const portsToTry = [
@@ -27,9 +59,9 @@ const sendMailHelper = async (mailOptions) => {
           tls: {
             rejectUnauthorized: false
           },
-          connectionTimeout: 6000,
-          greetingTimeout: 6000,
-          socketTimeout: 6000
+          connectionTimeout: 4000,
+          greetingTimeout: 4000,
+          socketTimeout: 4000
         });
 
         const info = await transporter.sendMail({
@@ -46,39 +78,8 @@ const sendMailHelper = async (mailOptions) => {
     }
   }
 
-  if (emailSent) return;
-
-  // 2. SECONDARY FALLBACK: Brevo REST API via axios
-  const cleanApiKey = process.env.BREVO_API_KEY ? process.env.BREVO_API_KEY.trim() : null;
-  if (cleanApiKey) {
-    try {
-      await axios.post(
-        'https://api.brevo.com/v3/smtp/email',
-        {
-          sender: {
-            name: senderName,
-            email: senderEmail
-          },
-          to: [{ email: mailOptions.to }],
-          subject: mailOptions.subject,
-          htmlContent: mailOptions.html
-        },
-        {
-          headers: {
-            'api-key': cleanApiKey,
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-      console.log(`📧 Email sent via Brevo fallback to: ${mailOptions.to}`);
-      emailSent = true;
-    } catch (brevoErr) {
-      console.error('❌ Brevo API send failed... Error:', brevoErr.response?.data || brevoErr.message);
-    }
-  }
-
   if (!emailSent) {
-    console.warn('[Email] No email provider succeeded. Check SMTP or Brevo API settings.');
+    console.warn('[Email] No email provider succeeded. Check Brevo API key or Hostinger SMTP settings.');
   }
 };
 
