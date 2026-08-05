@@ -101,9 +101,9 @@ const productsData = {
   }
 };
 
-export async function generateMetadata({ params }) {
-  const resolvedParams = await params;
-  const productId = resolvedParams?.id || 'raw-makhana';
+export async function generateMetadata(props) {
+  const params = await props.params;
+  const productId = params?.id || 'raw-makhana';
   const product = productsData[productId] || {
     name: 'Organic Makhana (Foxnuts)',
     description: '100% natural water-cultivated organic Makhana from Bihar farms.',
@@ -153,9 +153,9 @@ export async function generateMetadata({ params }) {
   };
 }
 
-export default async function ProductDetailPage({ params }) {
-  const resolvedParams = await params;
-  const productId = resolvedParams?.id || 'raw-makhana';
+export default async function ProductDetailPage(props) {
+  const params = await props.params;
+  const productId = params?.id || 'raw-makhana';
   const product = productsData[productId] || productsData['raw-makhana'];
 
   // Individual Product JSON-LD Schema
