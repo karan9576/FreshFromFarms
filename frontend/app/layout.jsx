@@ -1,3 +1,4 @@
+import Script from 'next/script';
 import '../src/styles/index.css';
 import '../src/App.css';
 import AppShell from '../src/components/AppShell';
@@ -129,6 +130,20 @@ export default function RootLayout({ children }) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
         />
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID || 'G-RJD0MW8LK9'}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${process.env.NEXT_PUBLIC_GA_ID || 'G-RJD0MW8LK9'}', {
+              page_path: window.location.pathname,
+            });
+          `}
+        </Script>
       </head>
       <body>
         <AppShell>
