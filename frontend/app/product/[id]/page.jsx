@@ -101,6 +101,16 @@ const productsData = {
   }
 };
 
+export async function generateStaticParams() {
+  return [
+    { id: 'raw-makhana' },
+    { id: 'salted-makhana' },
+    { id: 'peri-peri-makhana' },
+    { id: 'mint-makhana' },
+    { id: 'cheese-makhana' }
+  ];
+}
+
 export async function generateMetadata(props) {
   const params = await props.params;
   const productId = params?.id || 'raw-makhana';
@@ -142,7 +152,7 @@ export async function generateMetadata(props) {
           alt: product.name
         }
       ],
-      type: 'product'
+      type: 'website'
     },
     twitter: {
       card: 'summary_large_image',
